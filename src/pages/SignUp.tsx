@@ -1,16 +1,15 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Lock, User, AlertCircle } from 'lucide-react';
+import { Mail, Lock, User } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 const formSchema = z.object({
   firstName: z.string().min(2, { message: "First name must be at least 2 characters" }),
@@ -34,6 +33,8 @@ type FormValues = z.infer<typeof formSchema>;
 const SignUp = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { signup } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -48,17 +49,27 @@ const SignUp = () => {
   });
 
   const onSubmit = async (data: FormValues) => {
-    // This would connect to an auth service in a real implementation
-    console.log("Sign up data:", data);
+    setIsSubmitting(true);
     
-    // Simulate registration
-    setTimeout(() => {
+    try {
+      await signup(data.email, data.password, data.firstName, data.lastName);
+      
       toast({
         title: "Account created!",
-        description: "You have successfully registered.",
+        description: "Let's set up your profile now.",
       });
+      
+      // Redirect to profile setup
       navigate('/profile-setup');
-    }, 1000);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Sign up failed",
+        description: "Please check your information and try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -310,8 +321,8 @@ const SignUp = () => {
                 )}
               />
 
-              <Button type="submit" className="w-full">
-                Create Account
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
           </Form>

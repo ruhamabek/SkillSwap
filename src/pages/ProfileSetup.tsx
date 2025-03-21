@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 const formSchema = z.object({
   displayName: z.string().min(2, { message: "Display name must be at least 2 characters" }),
@@ -27,6 +28,7 @@ type FormValues = z.infer<typeof formSchema>;
 const ProfileSetup = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { completeProfile, user } = useAuth();
   const [teachSkills, setTeachSkills] = useState<string[]>([]);
   const [learnSkills, setLearnSkills] = useState<string[]>([]);
   const [newTeachSkill, setNewTeachSkill] = useState('');
@@ -35,12 +37,12 @@ const ProfileSetup = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      displayName: "",
+      displayName: user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : "",
       title: "",
       bio: "",
       university: "",
       location: "",
-      avatarUrl: "",
+      avatarUrl: user?.avatar || "",
     },
   });
 
@@ -72,14 +74,20 @@ const ProfileSetup = () => {
     // In a real app, this would send data to your backend
     console.log("Profile data:", { ...data, teachSkills, learnSkills });
     
-    // Simulate saving profile
-    setTimeout(() => {
-      toast({
-        title: "Profile created!",
-        description: "Your profile has been set up successfully.",
-      });
-      navigate('/profile');
-    }, 1000);
+    // Update the user profile in auth context
+    completeProfile({
+      ...data,
+      displayName: data.displayName,
+      avatar: data.avatarUrl,
+    });
+
+    toast({
+      title: "Profile created!",
+      description: "Your profile has been set up successfully.",
+    });
+    
+    // Redirect to profile page
+    navigate('/profile');
   };
 
   return (
@@ -279,7 +287,7 @@ const ProfileSetup = () => {
                 <Button 
                   type="button" 
                   variant="outline" 
-                  onClick={() => navigate('/sign-in')}
+                  onClick={() => navigate('/profile')}
                 >
                   Skip for Now
                 </Button>
