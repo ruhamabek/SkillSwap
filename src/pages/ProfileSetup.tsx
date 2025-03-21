@@ -33,6 +33,7 @@ const ProfileSetup = () => {
   const [learnSkills, setLearnSkills] = useState<string[]>([]);
   const [newTeachSkill, setNewTeachSkill] = useState('');
   const [newLearnSkill, setNewLearnSkill] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -70,24 +71,55 @@ const ProfileSetup = () => {
     setLearnSkills(learnSkills.filter(s => s !== skill));
   };
 
-  const onSubmit = async (data: FormValues) => {
-    // In a real app, this would send data to your backend
-    console.log("Profile data:", { ...data, teachSkills, learnSkills });
-    
-    // Update the user profile in auth context
-    completeProfile({
-      ...data,
-      displayName: data.displayName,
-      avatar: data.avatarUrl,
-    });
-
+  const handleSkip = () => {
     toast({
-      title: "Profile created!",
-      description: "Your profile has been set up successfully.",
+      title: "Profile setup skipped",
+      description: "You can complete your profile later from your dashboard.",
     });
-    
-    // Redirect to profile page
     navigate('/profile');
+  };
+
+  const onSubmit = async (data: FormValues) => {
+    // Don't submit if no skills are added
+    if (teachSkills.length === 0 || learnSkills.length === 0) {
+      toast({
+        title: "Missing skills",
+        description: "Please add at least one skill you can teach and one skill you want to learn.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      // In a real app, this would send data to your backend
+      console.log("Profile data:", { ...data, teachSkills, learnSkills });
+      
+      // Update the user profile in auth context
+      completeProfile({
+        ...data,
+        displayName: data.displayName,
+        avatar: data.avatarUrl,
+      });
+
+      toast({
+        title: "Profile created!",
+        description: "Your profile has been set up successfully.",
+      });
+      
+      // Redirect to profile page
+      navigate('/profile');
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast({
+        title: "Something went wrong",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -287,15 +319,15 @@ const ProfileSetup = () => {
                 <Button 
                   type="button" 
                   variant="outline" 
-                  onClick={() => navigate('/profile')}
+                  onClick={handleSkip}
                 >
                   Skip for Now
                 </Button>
                 <Button 
                   type="submit"
-                  disabled={teachSkills.length === 0 || learnSkills.length === 0}
+                  disabled={isSubmitting || teachSkills.length === 0 || learnSkills.length === 0}
                 >
-                  Complete Profile
+                  {isSubmitting ? "Saving..." : "Complete Profile"}
                 </Button>
               </div>
             </form>
