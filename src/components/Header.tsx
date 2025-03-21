@@ -1,14 +1,26 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, User, Search, MessageCircle } from 'lucide-react';
+import { Menu, X, User, Search, MessageCircle, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/context/AuthContext';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,6 +34,11 @@ const Header = () => {
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -71,17 +88,53 @@ const Header = () => {
           <Button variant="ghost" size="icon" aria-label="Search">
             <Search className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" aria-label="Messages">
-            <MessageCircle className="h-5 w-5" />
-          </Button>
-          <Link to="/profile">
-            <Button variant="ghost" size="icon" aria-label="Profile">
-              <User className="h-5 w-5" />
-            </Button>
-          </Link>
-          <Link to="/join">
-            <Button>Get Started</Button>
-          </Link>
+          
+          {isAuthenticated ? (
+            <>
+              <Button variant="ghost" size="icon" aria-label="Messages">
+                <MessageCircle className="h-5 w-5" />
+              </Button>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user?.avatar} />
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        {user?.firstName?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/messages')}>
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    <span>Messages</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
+            <>
+              <Link to="/sign-in">
+                <Button variant="ghost">Sign In</Button>
+              </Link>
+              <Link to="/sign-up">
+                <Button>Sign Up</Button>
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -115,14 +168,51 @@ const Header = () => {
                 {link.name}
               </Link>
             ))}
-            <div className="pt-3 border-t border-border flex items-center justify-between">
-              <Button size="sm" variant="outline" className="w-full" asChild>
-                <Link to="/profile">My Profile</Link>
-              </Button>
-              <div className="w-4"></div>
-              <Button size="sm" className="w-full" asChild>
-                <Link to="/join">Get Started</Link>
-              </Button>
+            
+            <div className="pt-3 border-t border-border">
+              {isAuthenticated ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 px-4 py-2">
+                    <Avatar className="h-9 w-9">
+                      <AvatarImage src={user?.avatar} />
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        {user?.firstName?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium text-sm">
+                        {user?.displayName || `${user?.firstName} ${user?.lastName}` || user?.email}
+                      </p>
+                      <p className="text-xs text-muted-foreground">View profile</p>
+                    </div>
+                  </div>
+                  
+                  <Link to="/profile" className="block px-4 py-2 text-sm text-foreground hover:bg-muted rounded-md">
+                    My Profile
+                  </Link>
+                  <Link to="/messages" className="block px-4 py-2 text-sm text-foreground hover:bg-muted rounded-md">
+                    Messages
+                  </Link>
+                  
+                  <Button 
+                    variant="outline" 
+                    className="w-full mt-2"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" /> Log out
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <Button size="sm" variant="outline" className="w-full" asChild>
+                    <Link to="/sign-in">Sign In</Link>
+                  </Button>
+                  <div className="w-4"></div>
+                  <Button size="sm" className="w-full" asChild>
+                    <Link to="/sign-up">Sign Up</Link>
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
