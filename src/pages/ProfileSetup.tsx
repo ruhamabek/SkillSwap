@@ -76,7 +76,7 @@ const ProfileSetup = () => {
       title: "Profile setup skipped",
       description: "You can complete your profile later from your dashboard.",
     });
-    navigate('/profile');
+    navigate('/'); // Redirect to home page instead of profile
   };
 
   const onSubmit = async (data: FormValues) => {
@@ -108,8 +108,8 @@ const ProfileSetup = () => {
         description: "Your profile has been set up successfully.",
       });
       
-      // Redirect to profile page
-      navigate('/profile');
+      // Redirect to home page after completion
+      navigate('/');
     } catch (error) {
       console.error("Error updating profile:", error);
       toast({
