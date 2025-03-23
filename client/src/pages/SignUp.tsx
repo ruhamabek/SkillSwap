@@ -79,6 +79,8 @@ const SignUp = () => {
       },
     });
   };
+  
+  
 
   return (
     <div className="flex min-h-screen bg-muted/30">
