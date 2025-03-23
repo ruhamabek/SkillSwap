@@ -79,7 +79,7 @@ const Hero = () => {
             </Link>
           </Button>
           <Button size="lg" variant="outline" className="text-base" asChild>
-            <Link to="/join">Create Profile</Link>
+            <Link to="/sign-up">Create Profile</Link>
           </Button>
         </div>
 
