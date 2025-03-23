@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, Lock, User } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import { authClient } from '@/lib/auth-client';
 
 const formSchema = z.object({
   firstName: z.string().min(2, { message: "First name must be at least 2 characters" }),
@@ -33,9 +33,8 @@ type FormValues = z.infer<typeof formSchema>;
 const SignUp = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signup } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+ 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,29 +46,38 @@ const SignUp = () => {
       termsAndConditions: false,
     },
   });
+   
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     
-    try {
-      await signup(data.email, data.password, data.firstName, data.lastName);
-      
-      toast({
-        title: "Account created!",
-        description: "Let's set up your profile now.",
-      });
-      
-      // Redirect to profile setup
-      navigate('/profile-setup');
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Sign up failed",
-        description: "Please check your information and try again.",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    await authClient.signUp.email({
+      email: data.email,
+      password: data.password,
+      name: `${data.firstName} ${data.lastName}`,
+      fetchOptions: {
+        onResponse: () => {
+          setIsSubmitting(false);
+        },
+        onRequest: () => {
+          setIsSubmitting(true);
+        },
+        onError: (ctx) => {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: ctx.error.message,
+          });
+        },
+        onSuccess: async () => {
+          navigate("/profile");
+          toast({
+            title: "Account created successfully",
+            description: "You can now sign in with your new account.",
+          });
+        },
+      },
+    });
   };
 
   return (
@@ -349,6 +357,21 @@ const SignUp = () => {
           </div>
 
           <div className="flex gap-2">
+            <Button variant="outline" className="w-full">
+              <svg
+                className="mr-2 h-4 w-4"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.164 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.605-3.369-1.343-3.369-1.343-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.03-2.682-.103-.253-.447-1.27.098-2.646 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.839a9.56 9.56 0 012.556.345c1.91-1.294 2.747-1.025 2.747-1.025.548 1.376.204 2.394.1 2.646.64.699 1.028 1.59 1.028 2.682 0 3.841-2.337 4.687-4.565 4.935.359.308.678.915.678 1.846 0 1.332-.012 2.407-.012 2.734 0 .267.18.577.688.48C19.138 20.16 22 16.416 22 12c0-5.523-4.477-10-10-10z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              GitHub
+            </Button>
             <Button variant="outline" className="w-full">
               <svg
                 className="mr-2 h-4 w-4"

@@ -10,6 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useToast } from '@/hooks/use-toast';
 import { Mail, Lock } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { authClient } from '@/lib/auth-client';
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -36,17 +37,34 @@ const SignIn = () => {
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
-    
+
     try {
-      await login(data.email, data.password);
-      
-      toast({
-        title: "Welcome back!",
-        description: "You have successfully signed in.",
+      await authClient.signIn.email({
+        email: data.email,
+        password: data.password,
+        fetchOptions: {
+          onResponse: () => {
+            setIsSubmitting(false);
+          },
+          onRequest: () => {
+            setIsSubmitting(true);
+          },
+          onError: (ctx) => {
+            toast({
+              variant: "destructive",
+              title: "Sign in failed",
+              description: ctx.error.message,
+            });
+          },
+          onSuccess: async () => {
+            navigate('/profile');
+            toast({
+              title: "Welcome back!",
+              description: "You have successfully signed in.",
+            });
+          },
+        },
       });
-      
-      // Redirect to profile page
-      navigate('/profile');
     } catch (error) {
       toast({
         variant: "destructive",
