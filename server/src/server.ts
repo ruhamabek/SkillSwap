@@ -5,6 +5,7 @@ import { connect } from "./db/mongo-client";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 
+
 const app = express();
 const PORT = 3000;
 
@@ -21,6 +22,8 @@ app.use(express.json());
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello from Express and TypeScript!");
 });
+
+
 
 async function startServer() {
   try {

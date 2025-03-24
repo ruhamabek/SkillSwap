@@ -4,7 +4,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X, User, Search, MessageCircle, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/context/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -14,13 +13,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { authClient } from '@/lib/auth-client';
+
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { 
+    data: session, 
+    isPending, //loading state
+    error, //error object
+    refetch //refetch the session
+} = authClient.useSession() 
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,7 +42,7 @@ const Header = () => {
   }, [location.pathname]);
 
   const handleLogout = () => {
-    logout();
+    authClient.signOut();
     navigate('/');
   };
 
@@ -89,7 +95,7 @@ const Header = () => {
             <Search className="h-5 w-5" />
           </Button>
           
-          {isAuthenticated ? (
+          {session ? (
             <>
               <Button variant="ghost" size="icon" aria-label="Messages">
                 <MessageCircle className="h-5 w-5" />
@@ -99,9 +105,9 @@ const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="rounded-full">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user?.avatar} />
+                      <AvatarImage src={session.user.image}/>
                       <AvatarFallback className="bg-primary/10 text-primary">
-                        {user?.firstName?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
+                        { session.user.name?.[0] || session.user?.email?.[0]?.toUpperCase() || 'U'}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -170,18 +176,18 @@ const Header = () => {
             ))}
             
             <div className="pt-3 border-t border-border">
-              {isAuthenticated ? (
+              {session ? (
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 px-4 py-2">
                     <Avatar className="h-9 w-9">
-                      <AvatarImage src={user?.avatar} />
+                      <AvatarImage  src={session.user.image} />
                       <AvatarFallback className="bg-primary/10 text-primary">
-                        {user?.firstName?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
+                        {session.user?.name?.[0] || session.user?.email?.[0]?.toUpperCase() || 'U'}
                       </AvatarFallback>
                     </Avatar>
                     <div>
                       <p className="font-medium text-sm">
-                        {user?.displayName || `${user?.firstName} ${user?.lastName}` || user?.email}
+                        {`${session.user?.name} ` || session.user?.email}
                       </p>
                       <p className="text-xs text-muted-foreground">View profile</p>
                     </div>

@@ -19,16 +19,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import SkillCard from '@/components/SkillCard';
-
+import { authClient } from '@/lib/auth-client';
+import { userInfo } from 'os';
 const Profile = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  const {data:session } = authClient.useSession();
+
   // Mock user data
   const user = {
-    name: 'Alex Morgan',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&crop=faces&auto=format&dpr=1',
+    name: session.user.name,
+    avatar: session.user.image ,
     title: 'Computer Science Student',
     location: 'San Francisco, CA',
     university: 'Stanford University',
