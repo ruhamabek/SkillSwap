@@ -36,7 +36,7 @@ const Profile = () => {
     location: 'San Francisco, CA',
     university: 'Stanford University',
     bio: 'Passionate about technology and education. I love to learn new things and share my knowledge with others. Currently focusing on machine learning and data visualization.',
-    joinDate: 'May 2023',
+    joinDate: session.user.createdAt,
     rating: 4.8,
     reviewCount: 24,
     completedExchanges: 15,
@@ -164,7 +164,11 @@ const Profile = () => {
                   <h1 className="text-3xl font-bold">{user.name}</h1>
                   <p className="text-muted-foreground">{user.title}</p>
                 </div>
-                <Button variant="outline" className="mt-2 md:mt-0 gap-2">
+                <Button 
+                  variant="outline" 
+                  className="mt-2 md:mt-0 gap-2" 
+                  onClick={() => window.location.href = '/profile-setup'}
+                >
                   <Edit className="h-4 w-4" /> Edit Profile
                 </Button>
               </div>
@@ -180,7 +184,7 @@ const Profile = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <User className="h-5 w-5 text-muted-foreground" />
-                  <span>Joined {user.joinDate}</span>
+                  <span>Joined at {new Date(user.joinDate).toLocaleDateString()}</span>
                 </div>
               </div>
               

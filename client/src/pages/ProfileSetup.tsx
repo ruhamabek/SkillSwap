@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -13,14 +12,13 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { authClient } from '@/lib/auth-client';
 
 const formSchema = z.object({
-  displayName: z.string().min(2, { message: "Display name must be at least 2 characters" }),
   title: z.string().min(2, { message: "Title must be at least 2 characters" }),
   bio: z.string().min(10, { message: "Bio must be at least 10 characters" }).max(300, { message: "Bio must be less than 300 characters" }),
   university: z.string().optional(),
   location: z.string().optional(),
-  avatarUrl: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -28,7 +26,7 @@ type FormValues = z.infer<typeof formSchema>;
 const ProfileSetup = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { completeProfile, user } = useAuth();
+  const { data: session } = authClient.useSession();// Assuming session is available here
   const [teachSkills, setTeachSkills] = useState<string[]>([]);
   const [learnSkills, setLearnSkills] = useState<string[]>([]);
   const [newTeachSkill, setNewTeachSkill] = useState('');
@@ -38,12 +36,10 @@ const ProfileSetup = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      displayName: user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : "",
       title: "",
       bio: "",
       university: "",
       location: "",
-      avatarUrl: user?.avatar || "",
     },
   });
 
@@ -80,7 +76,6 @@ const ProfileSetup = () => {
   };
 
   const onSubmit = async (data: FormValues) => {
-    // Don't submit if no skills are added
     if (teachSkills.length === 0 || learnSkills.length === 0) {
       toast({
         title: "Missing skills",
@@ -91,24 +86,27 @@ const ProfileSetup = () => {
     }
 
     setIsSubmitting(true);
-    
+
     try {
-      // In a real app, this would send data to your backend
       console.log("Profile data:", { ...data, teachSkills, learnSkills });
-      
-      // Update the user profile in auth context
+
+      // Assuming completeProfile is a function to handle profile completion
+      const completeProfile = async (profileData: any) => {
+        // Replace this with the actual implementation or API call
+        console.log("Profile completion logic here:", profileData);
+      };
+
       completeProfile({
         ...data,
-        displayName: data.displayName,
-        avatar: data.avatarUrl,
+        displayName: session.user.name,
+        avatar: session.user.image,
       });
 
       toast({
         title: "Profile created!",
         description: "Your profile has been set up successfully.",
       });
-      
-      // Redirect to home page after completion
+
       navigate('/');
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -138,44 +136,16 @@ const ProfileSetup = () => {
               <div className="flex flex-col md:flex-row gap-8">
                 <div className="flex flex-col items-center space-y-4">
                   <Avatar className="h-32 w-32">
-                    <AvatarImage src={form.watch('avatarUrl')} />
+                    <AvatarImage src={session.user.image} />
                     <AvatarFallback className="text-2xl">
-                      {form.watch('displayName')?.charAt(0) || '?'}
+                      {session.user.name?.charAt(0) || '?'}
                     </AvatarFallback>
                   </Avatar>
-                  <FormField
-                    control={form.control}
-                    name="avatarUrl"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormControl>
-                          <Input 
-                            placeholder="Avatar URL (optional)" 
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <p className="text-lg font-medium">{session.user.name}</p>
                 </div>
 
                 <div className="flex-1 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="displayName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Display Name*</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Your name" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
                     <FormField
                       control={form.control}
                       name="title"
