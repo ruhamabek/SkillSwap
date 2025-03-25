@@ -1,50 +1,112 @@
-import { Request, Response } from "express";
-import mongoose from "mongoose";
-import Profile from "../model/profile";  // The model for your Profile collection
-import { ObjectId } from "mongodb";
-import { client } from "../db/mongo-client"; 
-// MongoDB client setup for session database
+import { ObjectId } from 'mongodb';
+import { auth } from "../lib/auth";
+import Profile from '../model/profile';
 
-const db = client.db("SkillSwap"); // The session database name
-const sessionsCollection = db.collection("session");  // The session collection name
+import { Request, Response } from 'express';
 
-// Function to get profile based on sessionId
 const getProfile = async (req: Request, res: Response) => {
   try {
-    // Retrieve the sessionId from the request header (e.g., from a Bearer token or cookie)
-    const sessionId = req.headers["session-id"] as string; // Assuming sessionId is in headers
-    
-    if (!sessionId) {
-      return res.status(400).json({ message: "Session ID is required" });
+    const sessionResponse = await auth.api.getSession({
+      headers: req.headers,
+    });
+
+    // Handle session not found or invalid
+    if (!sessionResponse?.session) {
+      return res.status(401).json({ message: "Unauthorized - Invalid session" });
     }
 
-    // Find the session in the session collection
-    const session = await sessionsCollection.findOne({ _id: new ObjectId(sessionId) });
-
-    if (!session) {
-      return res.status(404).json({ message: "Session not found" });
+    // Destructure the needed values from the session
+    const { session: { id: sessionId } } = sessionResponse;
+    const {user} = sessionResponse;
+    // Ensure user information exists in the session
+    if (!user?.id) {
+      return res.status(401).json({ message: "Malformed session data" });
     }
 
-    // Retrieve the userId from the session
-    const { userId } = session;
+    // Convert to ObjectId if needed (check your BetterAuth user ID format)
+    const userId = new ObjectId(user.id);
 
-    // Now that we have the userId, fetch the user profile from the Profile collection
-    const profile = await Profile.findOne({ _id: userId });
+    // Fetch profile with proper type casting
+    const profile = await Profile.findOne({ _id: userId }).lean();
 
     if (!profile) {
-      return res.status(404).json({ message: "User profile not found" });
+      return res.status(404).json({ message: "Profile not found" });
     }
 
-    // Return the profile if found
-    res.json(profile);
+    // Return only public-facing fields
+    const safeProfile = {
+      title: profile.title,
+      bio: profile.bio,
+      university: profile.university,
+      location: profile.location,
+      skills: {
+        teaching: profile.skillsToTeach,
+        learning: profile.skillsToLearn
+      }
+    };
+
+    res.json(safeProfile);
 
   } catch (error) {
     console.error("Error fetching profile:", error);
-    res.status(500).json({ message: "Something went wrong" });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
+const createProfile = async (req: Request, res: Response) => {
+  try {
+    const sessionResponse = await auth.api.getSession({
+      headers: req.headers,
+    });
 
+    if (!sessionResponse?.session) {
+      return res.status(401).json({ message: "Unauthorized - Invalid session" });
+    }
 
+    
+    const {user} = sessionResponse;
+    
+    if (!user?.id) {
+      return res.status(401).json({ message: "Malformed session data" });
+    }
 
-export { getProfile };
+    // Check for existing profile first
+    const existingProfile = await Profile.findOne({ _id: new ObjectId(user.id) });
+    if (existingProfile) {
+      return res.status(409).json({ message: "Profile already exists" });
+    }
+
+    // Validate request body
+    const { title, bio, university, location, teachSkills, learnSkills } = req.body;
+    
+    if (!title?.trim() || !bio?.trim()) {
+      return res.status(400).json({ message: "Title and bio are required" });
+    }
+
+    if (!Array.isArray(teachSkills) || !Array.isArray(learnSkills)) {
+      return res.status(400).json({ message: "Skills must be arrays" });
+    }
+
+    // Create new profile with validation
+    const newProfile = new Profile({
+      _id: new ObjectId(user.id),
+      title: title.trim(),
+      bio: bio.trim(),
+      university: university?.trim() || undefined,
+      location: location?.trim() || undefined,
+      teachSkills: teachSkills.slice(0, 10), // Limit to 10 skills
+      learnSkills: learnSkills.slice(0, 10),
+      createdAt: new Date(),
+    });
+
+    await newProfile.save();
+
+    // Return created profile without internal fields
+    const { _id, ...responseProfile } = newProfile.toObject();
+    res.status(201).json(responseProfile);
+
+  } catch (error) {
+    console.error("Error creating profile:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
