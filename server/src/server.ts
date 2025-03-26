@@ -1,33 +1,36 @@
 import "dotenv/config";
 import express, { Request, Response } from "express";
-import cors from "cors"; // Import cors
-import { connect } from "./db/mongo-client";
+import cors from "cors";
+import { connect as authConnect} from "./db/mongo-client";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
-
+import {connect as dbConnect} from "./db/mongoose"
+import profileRoute from "../src/routes/profileRoute";
 
 const app = express();
 const PORT = 3000;
 
 app.use(
     cors({
-      origin: "http://localhost:8080", // Replace with your frontend's origin
-      methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed HTTP methods
-      credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+      origin: "http://localhost:8080", 
+      methods: ["GET", "POST", "PUT", "DELETE"], 
+      credentials: true,
     })
   );
 app.all("/api/auth/*", toNodeHandler(auth));
+
 app.use(express.json());
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello from Express and TypeScript!");
+app.get("/health", async (req: Request, res: Response) => {
+  res.send({ message: "health OK!" });
 });
 
-
+app.use("/profile" , profileRoute);
 
 async function startServer() {
   try {
-    await connect();
+    await authConnect();
+    await dbConnect();
     app.listen(PORT, () => {
       console.log(`Server running at http://localhost:${PORT}`);
     });
@@ -41,3 +44,5 @@ async function startServer() {
 }
 
 startServer();
+
+

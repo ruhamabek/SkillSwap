@@ -4,11 +4,9 @@
   "description": "",
   "main": "./src/server.ts",
   "scripts": {
-    "dev": "concurrently \"pnpm:auth-server\" \"pnpm:app-server\" ",
+     "dev": "nodemon",
     "build": "npm install && npx tsc",
-    "start": "node dist/index.js",
-    "auth-server": "ts-node src/server.ts", 
-    "app-server": "ts-node src/app-server.ts"
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",

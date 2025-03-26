@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const appDBUri = process.env.APP_DATABASE_URI as string; // Separate database URI
+const appDBUri = process.env.MongoURI as string; // Separate database URI
 
 async function connect(): Promise<void> {
   try {
