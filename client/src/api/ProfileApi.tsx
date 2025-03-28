@@ -32,7 +32,7 @@ const useProfile = () => {
   
   const updateProfileMutation = useMutation({
     mutationFn: async (profileData: object) => {
-      const response = await axios.put(`${API_BASE_URL}/profile/${session.data?.user?.id}`, profileData);
+      const response = await axios.put(`${API_BASE_URL}/${session.data?.user?.id}`, profileData ,  { withCredentials : true} )
       return response.data;
     },
     onSuccess: () => {

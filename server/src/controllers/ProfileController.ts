@@ -49,7 +49,8 @@ const createProfile = async (req: Request, res: Response) => {
 const updateProfile = async (req: Request, res: Response) => {
   try {
     const updatedFields = req.body;
-    const userid = req.params.id;
+    // Change req.params.id to req.params.userid
+    const userid = req.params.userid;
     const user = await getUser(req);
 
     if (!user) {
@@ -57,7 +58,7 @@ const updateProfile = async (req: Request, res: Response) => {
     }
 
     const updatedProfile = await Profile.findOneAndUpdate(
-      { userid: userid},
+      { userid: userid },
       updatedFields,
       { new: true }
     );
@@ -71,5 +72,6 @@ const updateProfile = async (req: Request, res: Response) => {
     return res.status(500).json({ error: "internal server error" });
   }
 };
+
 
 export default { getProfile, createProfile, updateProfile };
