@@ -7,7 +7,7 @@ import userCookieInterface from '../interface/userCookieInterface';
 export const getUser = async (req: Request): Promise<userCookieInterface | null> => {
   try {
     const session = await auth.api.getSession({
-      headers: new Headers(req.headers as Record<string, string>),
+      headers: req.headers as any,
     });
 
     const user = session?.user;
