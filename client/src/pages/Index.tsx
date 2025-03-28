@@ -6,8 +6,12 @@ import MatchSection from '@/components/MatchSection';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, BookOpen, MessageSquare, Users, Zap } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { authClient } from '@/lib/auth-client';
 
 const Index = () => {
+  const navigate = useNavigate();
+  const {data: session} = authClient.useSession(); 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -142,11 +146,17 @@ const Index = () => {
             </div>
             
             <div className="mt-12 text-center">
-              <Button size="lg" className="gap-2" asChild>
-                <a href="/sign-up">
-                  Get Started <ArrowRight className="h-4 w-4" />
-                </a>
-              </Button>
+            <Button
+  size="lg"
+  className="gap-2"
+  onClick={() => {
+    session ? navigate("/profile") : navigate("/sign-up");
+  }}
+>
+  <span className="flex items-center gap-2">
+    Get Started <ArrowRight className="h-4 w-4" />
+  </span>
+</Button>
             </div>
           </div>
         </section>

@@ -1,10 +1,13 @@
 
 import React, { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Book, Code, Palette, Mic, Users } from 'lucide-react';
+import { authClient } from '@/lib/auth-client';
 
 const Hero = () => {
+  const {data: session} = authClient.useSession();
+  const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
   const shapeRefs = useRef<Array<HTMLDivElement | null>>([]);
 
@@ -78,8 +81,16 @@ const Hero = () => {
               Browse Skills <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
-          <Button size="lg" variant="outline" className="text-base" asChild>
-            <Link to="/sign-up">Create Profile</Link>
+           <Button
+            size="lg"
+            className="gap-2"
+            onClick={() => {
+              session ? navigate("/profile") : navigate("/sign-up");
+            }}
+          >
+            <span className="flex items-center gap-2">
+              Create Profile <ArrowRight className="h-4 w-4" />
+            </span>
           </Button>
         </div>
 
