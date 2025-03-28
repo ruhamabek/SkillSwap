@@ -43,6 +43,32 @@ const createPayments = async (req: Request, res: Response) => {
   }
 };
 
+const verifyPayment = async (req: Request, res: Response) => {
+  try {
+    // Verify transaction with Chapa
+    const CHAPA_AUTH =
+      process.env.CHAPA_AUTH || "CHASECK_TEST-aDExemKF0gxrojDgFodIXww2a9KEATMh";
 
+    const config = {
+      headers: {
+        Authorization: `Bearer ${CHAPA_AUTH}`,
+      },
+    };
+    // Verify transaction with Chapa
+    const response = await axios.get(
+      `https://api.chapa.co/v1/transaction/verify/${req.params.id}`,
+      config
+    );
 
-export default { createPayments };
+    if (response.data.status === "success") {
+      res.json({ message: "Payment verified successfully" });
+    } else {
+      res.status(400).json({ message: "Payment verification failed" });
+    }
+  } catch (err) {
+    console.log("Payment verification error:", err);
+    res.status(500).json({ message: "Error verifying payment" });
+  }
+};
+
+export default { createPayments, verifyPayment };
