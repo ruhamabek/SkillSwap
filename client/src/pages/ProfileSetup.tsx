@@ -14,8 +14,8 @@ const ProfileSetup = () => {
     university: "",
     location: "",
     bio: "",
-    teachSkills: "",
-    learnSkills: "",
+    skillsToTeach: "",
+    skillsToLearn: "",
   });
 
   useEffect(() => {
@@ -25,8 +25,8 @@ const ProfileSetup = () => {
         university: profile.university || "",
         location: profile.location || "",
         bio: profile.bio || "",
-        teachSkills: profile.teachSkills || "",
-        learnSkills: profile.learnSkills || "",
+        skillsToTeach: profile.skillsToTeach || "",
+        skillsToLearn: profile.skillsToLearn || "",
       });
     }
   }, [profile]);
@@ -57,8 +57,8 @@ const ProfileSetup = () => {
             <Input name="university" placeholder="University" value={formData.university} onChange={handleChange} required />
             <Input name="location" placeholder="Location" value={formData.location} onChange={handleChange} required />
             <Input name="bio" placeholder="Bio" value={formData.bio} onChange={handleChange} required />
-            <Input name="teachSkills" placeholder="Skills you want to teach" value={formData.teachSkills} onChange={handleChange} required />
-            <Input name="learnSkills" placeholder="Skills you want to learn" value={formData.learnSkills} onChange={handleChange} required />
+            <Input name="skillsToTeach" placeholder="Skills you want to teach" value={formData.skillsToTeach} onChange={handleChange} required />
+            <Input name="skillsToLearn" placeholder="Skills you want to learn" value={formData.skillsToLearn} onChange={handleChange} required />
             <Button type="submit" className="w-full mt-2">{profile ? "Update Profile" : "Create Profile"}</Button>
           </form>
         </CardContent>
