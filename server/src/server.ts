@@ -6,6 +6,7 @@ import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import {connect as dbConnect} from "./db/mongoose"
 import profileRoute from "../src/routes/ProfileRoute";
+import paymentRoute from "../src/routes/paymentRoute";
 
 const app = express();
 const PORT = 3000;
@@ -26,6 +27,7 @@ app.get("/health", async (req: Request, res: Response) => {
 });
 
 app.use("/profile" , profileRoute);
+app.use("/pay", paymentRoute);
 
 async function startServer() {
   try {
