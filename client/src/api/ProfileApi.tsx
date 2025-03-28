@@ -18,10 +18,10 @@ const useProfile = () => {
     enabled: !!session.data?.user?.id,
   });
 
-
+ 
   const createProfileMutation = useMutation({
     mutationFn: async (profileData: object) => {
-      const response = await axios.post(API_BASE_URL, profileData);
+      const response = await axios.post(API_BASE_URL, profileData , { withCredentials: true });
       return response.data;
     },
     onSuccess: () => {
