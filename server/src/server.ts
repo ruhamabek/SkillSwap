@@ -5,7 +5,7 @@ import { connect as authConnect} from "./db/mongo-client";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import {connect as dbConnect} from "./db/mongoose"
-import profileRoute from "../src/routes/profileRoute";
+import profileRoute from "../src/routes/ProfileRoute";
 
 const app = express();
 const PORT = 3000;

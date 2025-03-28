@@ -1,5 +1,5 @@
 import { Router } from "express";
-import profileController from "../controllers/profileController";
+import profileController from "../controllers/ProfileController";
 
 const router = Router();
 router.get("/:userid", profileController.getProfile);

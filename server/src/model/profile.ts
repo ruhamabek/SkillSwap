@@ -31,7 +31,7 @@ const profileSchema = new mongoose.Schema({
   }
 });
 
-// Create the model and associate it with the schema
+
 const Profile = mongoose.model("Profile", profileSchema);
 
 export default Profile;

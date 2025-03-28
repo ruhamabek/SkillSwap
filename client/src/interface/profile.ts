@@ -5,7 +5,7 @@ interface profileInterface {
     bio: string;
     skillsToTeach: string[];
     skillsToLearn: string[];
-    userid: string;
+    userid?: string;
 }
 
 export default profileInterface
