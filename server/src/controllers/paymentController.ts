@@ -18,7 +18,7 @@ const createPayments = async (req: Request, res: Response) => {
     // Unique transaction reference
     const TEXT_REF = "tx-myecommerce12345-" + Date.now();
     const CALLBACK_URL = "http://localhost:5000/api/verify-payment/";
-    const RETURN_URL = `http://localhost:3000/pay/${encodeURIComponent(
+    const RETURN_URL = `http://localhost:8080/pay/${encodeURIComponent(
       id
     )}?tx_ref=${encodeURIComponent(TEXT_REF)}`;
 
