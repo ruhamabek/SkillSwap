@@ -1,13 +1,24 @@
-
-import React, { useState, useEffect } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  Edit, MessageSquare, Share, Star, Users, BookOpen, ArrowRight, 
-  Calendar, Check, Clock, Zap, User, MapPin, GraduationCap 
-} from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Edit,
+  MessageSquare,
+  Share,
+  Star,
+  Users,
+  BookOpen,
+  ArrowRight,
+  Calendar,
+  Check,
+  Clock,
+  Zap,
+  User,
+  MapPin,
+  GraduationCap,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -16,10 +27,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { authClient } from '@/lib/auth-client';
-import { useNavigate } from 'react-router-dom';
-import useProfile from '@/api/ProfileApi';
-
+import { authClient } from "@/lib/auth-client";
+import { useNavigate } from "react-router-dom";
+import useProfile from "@/api/ProfileApi";
 
 const Profile = () => {
   const { profile } = useProfile();
@@ -29,29 +39,28 @@ const Profile = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
- 
-  if (!session || !profile) {
+
+  if (!session ) {
     return (
       <div className="flex justify-center items-center h-screen">
         <p className="text-muted-foreground">Loading...</p>
       </div>
     );
   }
- 
+
   const user = {
-    name: session.user.name  ,
-    avatar: session.user.image  ,
-    title: profile.title,
-    location: profile.location  ,
-    university: profile.university ,
-    bio: profile.bio  ,
-    joinDate: session.user.createdAt  ,
+    name: session.user.name,
+    avatar: session.user.image,
+    title: profile?.title,
+    location: profile?.location,
+    university: profile?.university,
+    bio: profile?.bio,
+    joinDate: session.user.createdAt,
     rating: 4.8,
     reviewCount: 24,
     completedExchanges: 15,
-    teaches:profile.skillsToTeach,
-    learns: profile.skillsToLearn,
-    
+    teaches: profile?.skillsToTeach,
+    learns: profile?.skillsToLearn,
   };
 
   return (
@@ -66,7 +75,10 @@ const Profile = () => {
               <Avatar className="h-32 w-32 border-4 border-border">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="text-3xl">
-                  {user.name.split(" ").map((n) => n[0]).join("")}
+                  {user.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
                 </AvatarFallback>
               </Avatar>
 
@@ -89,7 +101,7 @@ const Profile = () => {
                 <Button
                   variant="outline"
                   className="mt-2 md:mt-0 gap-2"
-                  onClick={() => window.location.href = "/profile-setup"}
+                  onClick={() => (window.location.href = "/profile-setup")}
                 >
                   <Edit className="h-4 w-4" /> Edit Profile
                 </Button>
@@ -106,7 +118,9 @@ const Profile = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <User className="h-5 w-5 text-muted-foreground" />
-                  <span>Joined at {new Date(user.joinDate).toLocaleDateString()}</span>
+                  <span>
+                    Joined at {new Date(user.joinDate).toLocaleDateString()}
+                  </span>
                 </div>
               </div>
 
@@ -116,18 +130,26 @@ const Profile = () => {
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`h-4 w-4 ${i < Math.floor(user.rating) ? "text-amber-500 fill-amber-500" : "text-muted"}`}
+                        className={`h-4 w-4 ${
+                          i < Math.floor(user.rating)
+                            ? "text-amber-500 fill-amber-500"
+                            : "text-muted"
+                        }`}
                       />
                     ))}
                   </div>
                   <span className="font-medium">{user.rating}</span>
-                  <span className="text-muted-foreground text-sm">({user.reviewCount} reviews)</span>
+                  <span className="text-muted-foreground text-sm">
+                    ({user.reviewCount} reviews)
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-1">
                   <Zap className="h-5 w-5 text-primary" />
                   <span className="font-medium">{user.completedExchanges}</span>
-                  <span className="text-muted-foreground text-sm">exchanges completed</span>
+                  <span className="text-muted-foreground text-sm">
+                    exchanges completed
+                  </span>
                 </div>
               </div>
 
@@ -136,80 +158,85 @@ const Profile = () => {
           </div>
 
           {/* Main Content */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Skills I Teach */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Skills I Teach */}
             <Card>
-                <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                          <BookOpen className="h-5 w-5 text-primary" />
-                                Skills I Teach
-                       </CardTitle>
-                  <CardDescription>Skills I can share with others</CardDescription>
-                </CardHeader>
-             <CardContent>
-          <div className="space-y-3">
-            {user.teaches.length > 0 ? (
-              user.teaches.map((skill, index) => (
-                <div
-                  key={index}
-                  className="flex justify-between items-center p-3 bg-muted/50 rounded-md"
-                >
-                  <div className="font-medium">{skill}</div>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-primary" />
+                  Skills I Teach
+                </CardTitle>
+                <CardDescription>
+                  Skills I can share with others
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {user.teaches?.length > 0 ? (
+                    user.teaches?.map((skill, index) => (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center p-3 bg-muted/50 rounded-md"
+                      >
+                        <div className="font-medium">{skill}</div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-muted-foreground">
+                      No skills added yet.
+                    </p>
+                  )}
                 </div>
-              ))
-            ) : (
-              <p className="text-muted-foreground">No skills added yet.</p>
-            )}
-          </div>
-            </CardContent>
-            <CardFooter>
-              <Button
-                variant="secondary"
-                className="w-full bg-primary text-white hover:bg-primary/90"
-                onClick={() => navigate("/profile-setup")}
-              >
-                Add New Skill
-              </Button>
-            </CardFooter>
-          </Card>
+              </CardContent>
+              <CardFooter>
+                <Button
+                  variant="secondary"
+                  className="w-full bg-primary text-white hover:bg-primary/90"
+                  onClick={() => navigate("/profile-setup")}
+                >
+                  Add New Skill
+                </Button>
+              </CardFooter>
+            </Card>
 
-{/* Skills I Want to Learn */}
-<Card>
-  <CardHeader>
-    <CardTitle className="flex items-center gap-2">
-      <Users className="h-5 w-5 text-primary" />
-      Skills I Want to Learn
-    </CardTitle>
-    <CardDescription>Skills I'm looking to develop</CardDescription>
-  </CardHeader>
-  <CardContent>
-    <div className="space-y-3">
-      {user.learns.length > 0 ? (
-        user.learns.map((skill, index) => (
-          <div
-            key={index}
-            className="flex justify-between items-center p-3 bg-muted/50 rounded-md"
-          >
-            <div className="font-medium">{skill}</div>
+            {/* Skills I Want to Learn */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  Skills I Want to Learn
+                </CardTitle>
+                <CardDescription>Skills I'm looking to develop</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {user.learns?.length > 0 ? (
+                    user.learns?.map((skill, index) => (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center p-3 bg-muted/50 rounded-md"
+                      >
+                        <div className="font-medium">{skill}</div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-muted-foreground">
+                      No skills added yet.
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button
+                  variant="secondary"
+                  className="w-full bg-primary text-white hover:bg-primary/90"
+                  onClick={() => navigate("/profile-setup")}
+                >
+                  Add New Skill
+                </Button>
+              </CardFooter>
+            </Card>
           </div>
-        ))
-      ) : (
-        <p className="text-muted-foreground">No skills added yet.</p>
-      )}
-    </div>
-            </CardContent>
-               <CardFooter>
-               <Button
-                variant="secondary"
-                className="w-full bg-primary text-white hover:bg-primary/90"
-                onClick={() => navigate("/profile-setup")}
-              >
-                Add New Skill
-              </Button>
-                       </CardFooter>
-                  </Card>
-              </div>
- 
         </div>
       </main>
       <Footer />
