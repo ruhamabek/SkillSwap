@@ -164,8 +164,8 @@ const Profile = () => {
             </CardContent>
             <CardFooter>
               <Button
-                variant="outline"
-                className="w-full"
+                variant="secondary"
+                className="w-full bg-primary text-white hover:bg-primary/90"
                 onClick={() => navigate("/profile-setup")}
               >
                 Add New Skill
@@ -199,12 +199,13 @@ const Profile = () => {
     </div>
             </CardContent>
                <CardFooter>
-                  <Button
-                     variant="outline"
-                      className="w-full"
-                      onClick={() => navigate("/profile-setup")} >
-                          Add New Skill
-                         </Button>
+               <Button
+                variant="secondary"
+                className="w-full bg-primary text-white hover:bg-primary/90"
+                onClick={() => navigate("/profile-setup")}
+              >
+                Add New Skill
+              </Button>
                        </CardFooter>
                   </Card>
               </div>
