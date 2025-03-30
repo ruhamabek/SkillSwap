@@ -1,19 +1,19 @@
-
-import React from 'react';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
-import { Clock, Star, Users } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { Clock, Star, Users } from "lucide-react";
 
 interface SkillCardProps {
   skill: {
     id: string;
     name: string;
     category: string;
-    level: 'Beginner' | 'Intermediate' | 'Advanced';
+    level: "Beginner" | "Intermediate" | "Advanced";
     duration: string;
     rating: number;
+    checkout?: number;
     students: number;
     image?: string;
     color?: string;
@@ -24,70 +24,81 @@ interface SkillCardProps {
 const SkillCard = ({ skill, className }: SkillCardProps) => {
   const getLevelColor = (level: string) => {
     switch (level) {
-      case 'Beginner': return 'bg-green-100 text-green-800';
-      case 'Intermediate': return 'bg-blue-100 text-blue-800';
-      case 'Advanced': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "Beginner":
+        return "bg-green-100 text-green-800";
+      case "Intermediate":
+        return "bg-blue-100 text-blue-800";
+      case "Advanced":
+        return "bg-purple-100 text-purple-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
-  
+
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      'Programming': 'bg-skill-python text-white',
-      'Design': 'bg-skill-design text-white',
-      'Music': 'bg-skill-music text-white',
-      'Writing': 'bg-skill-writing text-white',
-      'Photography': 'bg-skill-photo text-white',
-      'Marketing': 'bg-skill-marketing text-white',
-      'JavaScript': 'bg-skill-javascript text-black',
+      Programming: "bg-skill-python text-white",
+      Design: "bg-skill-design text-white",
+      Music: "bg-skill-music text-white",
+      Writing: "bg-skill-writing text-white",
+      Photography: "bg-skill-photo text-white",
+      Marketing: "bg-skill-marketing text-white",
+      JavaScript: "bg-skill-javascript text-black",
     };
-    
-    return colors[category] || 'bg-skill-default text-white';
+
+    return colors[category] || "bg-skill-default text-white";
   };
 
   return (
     <Card className={cn("overflow-hidden card-hover", className)}>
       <div className="aspect-video relative overflow-hidden">
         {skill.image ? (
-          <img 
-            src={skill.image} 
+          <img
+            src={skill.image}
             alt={skill.name}
             className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
           />
         ) : (
-          <div 
+          <div
             className={cn(
               "w-full h-full flex items-center justify-center",
               skill.color || "bg-gradient-to-br from-primary/80 to-secondary/80"
             )}
           >
-            <span className="text-xl font-bold text-white">{skill.name.substring(0, 2).toUpperCase()}</span>
+            <span className="text-xl font-bold text-white">
+              {skill.name.substring(0, 2).toUpperCase()}
+            </span>
           </div>
         )}
-        <Badge 
+        <Badge
           className={cn(
-            "absolute top-3 left-3 border-0", 
+            "absolute top-3 left-3 border-0",
             getCategoryColor(skill.category)
           )}
         >
           {skill.category}
         </Badge>
       </div>
-      
+
       <CardContent className="pt-4">
-        <h3 className="text-lg font-semibold mb-1 line-clamp-1">{skill.name}</h3>
-        
+        <h3 className="text-lg font-semibold mb-1 line-clamp-1">
+          {skill.name}
+        </h3>
+
         <div className="flex flex-wrap gap-2 mt-3">
-          <Badge variant="outline" className={cn("font-normal", getLevelColor(skill.level))}>
+          <Badge
+            variant="outline"
+            className={cn("font-normal", getLevelColor(skill.level))}
+          >
             {skill.level}
           </Badge>
-          
+
           <div className="flex items-center text-xs text-muted-foreground gap-1">
             <Clock className="h-3 w-3" />
             <span>{skill.duration}</span>
           </div>
         </div>
-        
+
         <div className="flex justify-between items-center mt-4">
           <div className="flex items-center gap-2">
             <div className="flex items-center">
@@ -101,9 +112,17 @@ const SkillCard = ({ skill, className }: SkillCardProps) => {
           </div>
         </div>
       </CardContent>
-      
+
       <CardFooter className="pt-0">
-        <Button variant="secondary" className="w-full">Request Exchange</Button>
+        {!skill.checkout ? (
+          <Button variant="secondary" className="w-full">
+            Request Exchange
+          </Button>
+        ) : (
+          <Button variant="secondary" className="w-full">
+            pay
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
