@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Clock, Star, Users } from "lucide-react";
+import Payment from "../api/paymentApi";
 
 interface SkillCardProps {
   skill: {
@@ -22,6 +23,7 @@ interface SkillCardProps {
 }
 
 const SkillCard = ({ skill, className }: SkillCardProps) => {
+  const { paymentMutation } = Payment();
   const getLevelColor = (level: string) => {
     switch (level) {
       case "Beginner":
@@ -47,6 +49,24 @@ const SkillCard = ({ skill, className }: SkillCardProps) => {
     };
 
     return colors[category] || "bg-skill-default text-white";
+  };
+  const datas = {
+    id: 10,
+    amount: 100,
+    email: "teshx@gmail.com",
+    first_name: "teshx",
+    last_name: "habtie",
+  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const response = await paymentMutation.mutateAsync(datas);
+
+    if (typeof response === "string") {
+      window.location.href = response; // Redirect if response is a URL
+    } else {
+      console.error("Invalid response:", response);
+    }
   };
 
   return (
@@ -119,7 +139,11 @@ const SkillCard = ({ skill, className }: SkillCardProps) => {
             Request Exchange
           </Button>
         ) : (
-          <Button variant="secondary" className="w-full">
+          <Button
+            variant="secondary"
+            onClick={handleSubmit}
+            className="w-full"
+          >
             pay
           </Button>
         )}
