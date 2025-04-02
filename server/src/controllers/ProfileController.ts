@@ -1,8 +1,8 @@
 // src/controllers/userController.ts
-import { Request, Response } from 'express';
-import { getUser } from '../utils/getUser';
-import profileInterface from '../interface/profileInterface';
-import Profile from '../model/profile';
+import { Request, Response } from "express";
+import { getUser } from "../utils/getUser";
+import profileInterface from "../interface/profileInterface";
+import Profile from "../model/profile";
 
 const getProfile = async (req: Request, res: Response) => {
   try {
@@ -19,9 +19,24 @@ const getProfile = async (req: Request, res: Response) => {
   }
 };
 
+const allProfile = async (req: Request, res: Response) => {
+  try {
+    const profiles = await Profile.find({});
+
+    if (!profiles || profiles.length === 0) {
+      return res.status(404).json({ error: "No profiles found" });
+    }
+
+    return res.status(200).json(profiles);
+  } catch (err) {
+    console.error("Error fetching profiles:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 const createProfile = async (req: Request, res: Response) => {
   try {
-    const body: profileInterface  = req.body;
+    const body: profileInterface = req.body;
     const user = await getUser(req);
 
     if (!user) {
@@ -45,7 +60,6 @@ const createProfile = async (req: Request, res: Response) => {
   }
 };
 
-
 const updateProfile = async (req: Request, res: Response) => {
   try {
     const updatedFields = req.body;
@@ -64,7 +78,9 @@ const updateProfile = async (req: Request, res: Response) => {
     );
 
     if (!updatedProfile) {
-      return res.status(404).json({ error: "profile not found or unauthorized" });
+      return res
+        .status(404)
+        .json({ error: "profile not found or unauthorized" });
     }
 
     return res.status(200).json(updatedProfile);
@@ -73,5 +89,4 @@ const updateProfile = async (req: Request, res: Response) => {
   }
 };
 
-
-export default { getProfile, createProfile, updateProfile };
+export default { getProfile, createProfile, allProfile, updateProfile };
