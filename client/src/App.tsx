@@ -12,6 +12,7 @@ import Payment from "./pages/payment";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import ProfileSetup from "./pages/ProfileSetup";
+import Home from "./pages/Home";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/browse" element={<Browse />} />
+          <Route path="/chat/:id" element={<Home />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="pay/:id" element={<Payment />} />
