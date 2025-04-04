@@ -5,7 +5,6 @@ import useOnlineUsers from "@/hooks/useOnlineUsers";
 import { useParams } from "react-router-dom";
 import Avatar from "@/components/Avatar";
 import uploadFile from "../helpers/uploadFile";
-import { userInfo } from "os";
 
 export default function Home() {
   const [socket, setSocket] = useState(null);
@@ -41,25 +40,23 @@ export default function Home() {
 
   useEffect(() => {
     // Connect to Socket.IO server
-    const newSocket = io("http://localhost:3000", {
-      reconnectionAttempts: 5,
-      query: {
-        userid: session?.user.id,
-      },
-    });
+    if (session?.user?.id) {
+      const newSocket = io("http://localhost:3000", {
+        reconnectionAttempts: 5,
+        query: {
+          userid: session.user.id,
+        },
+      });
 
-    newSocket.on("connect", () => {
-      console.log("✅ Connected:", newSocket.id);
-      setSocket(newSocket);
-    });
+      newSocket.on("connect", () => {
+        console.log("✅ Connected:", newSocket.id);
+        setSocket(newSocket);
+      });
 
-    // newSocket.on("onlineUser", (users) => {
-    //   console.log("Online Users:", users);
-    // });
-
-    return () => {
-      newSocket.disconnect();
-    };
+      return () => {
+        newSocket.disconnect();
+      };
+    }
   }, [session?.user.id]);
 
   useEffect(() => {
@@ -76,7 +73,7 @@ export default function Home() {
         setAllMessage(data);
       });
     }
-  }, [socket, id, allMessage, session?.user.id]);
+  }, [socket, id, session?.user.id]);
   const handleUploadImageVideoOpen = () => {
     setOpenImageVideoUpload((preve) => !preve);
   };
