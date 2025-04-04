@@ -22,7 +22,7 @@ export default function socketHandler(server: any) {
     console.log("🔥 New connection:", socket.id);
 
     const userId = socket.handshake.query.userid;
-    console.log("User ID: ", userId);
+    console.log("User ID: sender ", userId);
     //create rom
 
     socket.join(userId as string);
@@ -34,16 +34,27 @@ export default function socketHandler(server: any) {
     socket.on("message", async (id: string) => {
       const userdetails = await Profile.findOne({ userid: id });
       const user = userdetails?.toObject();
-      // console.log("User Details:", userdetails);
+      console.log("User Details: bbbbbbbbbbbbbbbb", userdetails);
 
       socket.emit("userDetails", userdetails);
+
+      //get previous message
+      const getConversationMessage = await ConversationModel.findOne({
+        $or: [
+          { sender: userId, receiver: user?.userid },
+          { sender: user?.userid, receiver: userId },
+        ],
+      })
+        .populate("messages")
+        .sort({ updatedAt: -1 });
+
+      socket.emit("message", getConversationMessage?.messages || []);
     });
     // Notify all clients about new online user
     io.emit("online_users", Array.from(onlineUsers.values()));
-
     //new message
 
-    socket.on("new message",async (data) => {
+    socket.on("new message", async (data) => {
       //check conversation is available both user
 
       let conversation = await ConversationModel.findOne({
@@ -97,7 +108,7 @@ export default function socketHandler(server: any) {
 
       // //send conversation
       // const conversationSender = await getConversation(data?.sender);
-      // const conversationReceiver = await getConversation(data?.receiver);
+      // const conversationReceiver = await getConversationme(data?.receiver);
 
       // io.to(data?.sender).emit("conversation", conversationSender);
       // io.to(data?.receiver).emit("conversation", conversationReceiver);
