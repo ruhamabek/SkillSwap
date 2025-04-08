@@ -7,6 +7,7 @@ import { auth } from "./lib/auth";
 import { connect as dbConnect } from "./db/mongoose";
 import profileRoute from "../src/routes/ProfileRoute";
 import paymentRoute from "../src/routes/paymentRoute";
+import connectionRoutes from "../src/routes/connectionRoutes";
 import http from "http";
 import socketHandler from "./socket";
 
@@ -17,7 +18,7 @@ const server = http.createServer(app);
 socketHandler(server);
 
 // const app = express();
-const PORT = 3000;
+const PORT = 4000;
 
 app.use(
   cors({
@@ -36,6 +37,7 @@ app.get("/health", async (req: Request, res: Response) => {
 
 app.use("/profile", profileRoute);
 app.use("/pay", paymentRoute);
+app.use("/api/connections", connectionRoutes);
 
 async function startServer() {
   try {
