@@ -79,7 +79,38 @@ const respondToRequest = async (req: Request, res: Response) => {
     res.status(500).json({ error: (error as Error).message });
   }
 };
+const requestToconnect = async (req: Request, res: Response) => {
+  const { userId } = req.params; // sender
+  const { action } = req.body;
 
+  // Check if a request already exists
+  const existingRequest = await ConnectionRequest.findOne({
+    sender: userId,
+    receiver: action,
+    status: "pending",
+  });
+
+  if (existingRequest) {
+    return res.json({ message: "Request already sent." });
+  }
+
+  try {
+    const newRequest = new ConnectionRequest({
+      sender: userId,
+      receiver: action,
+      status: "pending",
+    });
+
+    await newRequest.save();
+    res.json({
+      message: "successfuly requested",
+      success: true,
+      request: newRequest,
+    });
+  } catch (error) {
+    res.json({ error: (error as Error).message });
+  }
+};
 export default {
   getPendingCount,
   getConnections,
