@@ -14,6 +14,18 @@ const getPendingCount = async (req: Request, res: Response) => {
   }
 };
 
+const getConnections = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const requests = await ConnectionRequest.find({
+      receiver: userId,
+      status: "pending",
+    }).populate("sender", "name title");
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+};
 
 export default {
   getPendingCount,
