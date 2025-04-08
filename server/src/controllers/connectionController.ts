@@ -93,6 +93,36 @@ const requestToconnect = async (req: Request, res: Response) => {
   if (existingRequest) {
     return res.json({ message: "Request already sent." });
   }
+  // Check if a request already exists
+  const existingRequests = await ConnectionRequest.findOne({
+    sender: action,
+    receiver: userId,
+    status: "pending",
+  });
+
+  if (existingRequests) {
+    return res.json({ message: "Request already sent." });
+  }
+  // Check if a request already exists
+  const acceptexistingRequest = await ConnectionRequest.findOne({
+    sender: userId,
+    receiver: action,
+    status: "accepted",
+  });
+
+  if (acceptexistingRequest) {
+    return res.json({ message: "you are already connected!" });
+  }
+  // Check if a request already exists
+  const acceptexistingRequestby = await ConnectionRequest.findOne({
+    sender: action,
+    receiver: userId,
+    status: "accepted",
+  });
+
+  if (acceptexistingRequestby) {
+    return res.json({ message: "you are already connected!" });
+  }
 
   try {
     const newRequest = new ConnectionRequest({
