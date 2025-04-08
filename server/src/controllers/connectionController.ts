@@ -51,6 +51,34 @@ const getacceptedbyConnections = async (req: Request, res: Response) => {
   }
 };
 
+const respondToRequest = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params; // receiver
+    const { senderId, action } = req.body; // sender and action ('accept' or 'reject')
+
+    // Find the connection request
+    const connectionRequest = await ConnectionRequest.findOne({
+      sender: senderId,
+      receiver: userId,
+      status: "pending",
+    });
+
+    if (!connectionRequest) {
+      return res.status(404).json({ message: "Connection request not found." });
+    }
+
+    if (action === "accept") {
+      connectionRequest.status = "accepted";
+      await connectionRequest.save();
+    } else if (action === "reject") {
+      await ConnectionRequest.findByIdAndDelete(connectionRequest._id);
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+};
 
 export default {
   getPendingCount,
