@@ -40,7 +40,7 @@ const Profile = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  if (!session ) {
+  if (!session) {
     return (
       <div className="flex justify-center items-center h-screen">
         <p className="text-muted-foreground">Loading...</p>

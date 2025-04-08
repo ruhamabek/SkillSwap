@@ -59,7 +59,7 @@ const SkillCard = ({ skill, className }: SkillCardProps) => {
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    setIsLoading(true);
     const response = await paymentMutation.mutateAsync(datas);
 
     if (typeof response === "string") {
@@ -68,7 +68,7 @@ const SkillCard = ({ skill, className }: SkillCardProps) => {
       console.error("Invalid response:", response);
     }
   };
-
+  const [isLoading, setIsLoading] = React.useState(false);
   return (
     <Card className={cn("overflow-hidden card-hover", className)}>
       <div className="aspect-video relative overflow-hidden">
@@ -143,8 +143,9 @@ const SkillCard = ({ skill, className }: SkillCardProps) => {
             variant="secondary"
             onClick={handleSubmit}
             className="w-full"
+            disabled={isLoading}
           >
-            pay
+            {isLoading ? "Loading..." : "Pay"}
           </Button>
         )}
       </CardFooter>

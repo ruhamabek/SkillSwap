@@ -2,7 +2,7 @@ import { authClient } from "@/lib/auth-client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000/pay";
+const API_BASE_URL = "http://localhost:4000/pay";
 
 interface PaymentVariables {
   id: number;

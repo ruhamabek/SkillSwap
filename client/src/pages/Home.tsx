@@ -41,7 +41,7 @@ export default function Home() {
   useEffect(() => {
     // Connect to Socket.IO server
     if (session?.user?.id) {
-      const newSocket = io("http://localhost:3000", {
+      const newSocket = io("http://localhost:4000", {
         reconnectionAttempts: 5,
         query: {
           userid: session.user.id,
