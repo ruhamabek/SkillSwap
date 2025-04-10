@@ -26,12 +26,11 @@ const profileSchema = new mongoose.Schema({
     type: [String],
     required: true,
   },
-  userid:{
-     type: String
-  }
+  userid: {
+    type: String,
+  },
 });
 
-
-const Profile = mongoose.model("Profile", profileSchema);
+const Profile = mongoose.model("Profile", profileSchema, "profiles");
 
 export default Profile;

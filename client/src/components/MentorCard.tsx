@@ -2,11 +2,11 @@ import React from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Star } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { MessageSquare, Star, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface ProfileCardProps {
+interface MentorCardProps {
   profile: {
     id: string;
     name: string;
@@ -18,11 +18,21 @@ interface ProfileCardProps {
     university?: string;
     location?: string;
     bio?: string;
+    isPremium?: boolean;
   };
+  isLoading: boolean;
+  onConnect: (id: string) => void;
+  onSubmit: (e: React.FormEvent, id: string) => void;
   className?: string;
 }
 
-const ProfileCard = ({ profile, className }: ProfileCardProps) => {
+const MentorCard = ({
+  profile,
+  isLoading,
+  onConnect,
+  onSubmit,
+  className,
+}: MentorCardProps) => {
   const initials = profile.name
     ? profile.name
         .split(" ")
@@ -38,6 +48,13 @@ const ProfileCard = ({ profile, className }: ProfileCardProps) => {
         className
       )}
     >
+      {profile.isPremium && (
+        <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-xs font-bold py-1 px-3 flex items-center">
+          <Zap className="h-3 w-3 mr-1" />
+          PREMIUM MENTOR
+        </div>
+      )}
+
       <CardContent className="pt-6 flex-grow">
         <div className="flex flex-col items-center text-center">
           <Avatar className="h-20 w-20 border-2 border-border mb-4">
@@ -130,9 +147,26 @@ const ProfileCard = ({ profile, className }: ProfileCardProps) => {
       </CardContent>
 
       <CardFooter className="flex gap-2 pt-0">
-        <Button variant="default" className="w-full">
-          Connect
-        </Button>
+        {profile.isPremium ? (
+          <form onSubmit={(e) => onSubmit(e, profile.id)} className="w-full">
+            <Button
+              type="submit"
+              variant="default"
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? "Processing..." : "Upgrade ($100)"}
+            </Button>
+          </form>
+        ) : (
+          <Button
+            variant="default"
+            className="w-full"
+            onClick={() => onConnect(profile.id)}
+          >
+            Request Connection
+          </Button>
+        )}
         <Button variant="outline" size="icon">
           <MessageSquare className="h-4 w-4" />
         </Button>
@@ -141,4 +175,4 @@ const ProfileCard = ({ profile, className }: ProfileCardProps) => {
   );
 };
 
-export default ProfileCard;
+export default MentorCard;

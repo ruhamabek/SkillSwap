@@ -2,26 +2,33 @@ import { authClient } from "@/lib/auth-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000/profile";
+const API_BASE_URL = "http://localhost:4000/profile";
 
 const useProfile = () => {
   const session = authClient.useSession();
   const queryClient = useQueryClient();
 
-  const { data: profile, isLoading, isError } = useQuery({
+  const {
+    data: profile,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["profile", session.data?.user?.id],
     queryFn: async () => {
       if (!session.data?.user?.id) return null;
-      const response = await axios.get(`${API_BASE_URL}/${session.data.user.id}`);
+      const response = await axios.get(
+        `${API_BASE_URL}/${session.data.user.id}`
+      );
       return response.data;
     },
     enabled: !!session.data?.user?.id,
   });
 
- 
   const createProfileMutation = useMutation({
     mutationFn: async (profileData: object) => {
-      const response = await axios.post(API_BASE_URL, profileData , { withCredentials: true });
+      const response = await axios.post(API_BASE_URL, profileData, {
+        withCredentials: true,
+      });
       return response.data;
     },
     onSuccess: () => {
@@ -29,18 +36,37 @@ const useProfile = () => {
     },
   });
 
-  
   const updateProfileMutation = useMutation({
     mutationFn: async (profileData: object) => {
-      const response = await axios.put(`${API_BASE_URL}/${session.data?.user?.id}`, profileData ,  { withCredentials : true} )
+      const response = await axios.put(
+        `${API_BASE_URL}/${session.data?.user?.id}`,
+        profileData,
+        { withCredentials: true }
+      );
       return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
     },
   });
+  const getALLProfileMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axios.get(`${API_BASE_URL}/all/allprofile`, {
+        withCredentials: true,
+      });
+      return response.data;
+    },
+    onSuccess: () => {},
+  });
 
-  return { profile, isLoading, isError, createProfileMutation, updateProfileMutation };
+  return {
+    profile,
+    isLoading,
+    isError,
+    createProfileMutation,
+    updateProfileMutation,
+    getALLProfileMutation,
+  };
 };
 
 export default useProfile;

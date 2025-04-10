@@ -87,53 +87,54 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       
+
       <main>
         <Hero />
-        
+
         {/* Features Section */}
         <section className="py-20 px-6 md:px-8 bg-muted/50">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="heading-2 mb-4">How SkillSwap Works</h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Our platform makes it easy to connect with peers, learn new skills, 
-                and share your expertise.
+                Our platform makes it easy to connect with peers, learn new
+                skills, and share your expertise.
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {features.map((feature, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="bg-white p-6 rounded-xl shadow-sm border border-border hover:shadow-md transition-shadow"
                 >
                   <div className="mb-4 p-3 bg-primary/10 inline-block rounded-lg">
                     {feature.icon}
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                  <h3 className="text-xl font-semibold mb-2">
+                    {feature.title}
+                  </h3>
                   <p className="text-muted-foreground">{feature.description}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
-        
+
         {/* How It Works (Steps) */}
         <section className="py-20 px-6 md:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="heading-2 mb-4">Simple Steps to Get Started</h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Start your skill exchange journey in four easy steps and unlock new learning opportunities.
+                Start your skill exchange journey in four easy steps and unlock
+                new learning opportunities.
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {howItWorks.map((step, index) => (
-                <div 
-                  key={index} 
-                  className="relative group"
-                >
+                <div key={index} className="relative group">
                   <div className="absolute -top-6 -left-6 text-8xl font-bold text-primary/10 group-hover:text-primary/15 transition-colors">
                     {step.step}
                   </div>
@@ -144,37 +145,38 @@ const Index = () => {
                 </div>
               ))}
             </div>
-            
+
             <div className="mt-12 text-center">
-            <Button
-  size="lg"
-  className="gap-2"
-  onClick={() => {
-    session ? navigate("/profile") : navigate("/sign-up");
-  }}
->
-  <span className="flex items-center gap-2">
-    Get Started <ArrowRight className="h-4 w-4" />
-  </span>
-</Button>
+              <Button
+                size="lg"
+                className="gap-2"
+                onClick={() => {
+                  session ? navigate("/profile") : navigate("/sign-up");
+                }}
+              >
+                <span className="flex items-center gap-2">
+                  Get Started <ArrowRight className="h-4 w-4" />
+                </span>
+              </Button>
             </div>
           </div>
         </section>
-        
+
         {/* Testimonials */}
         <section className="py-20 px-6 md:px-8 bg-accent">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="heading-2 mb-4">What Our Users Say</h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Read about the experiences of students who have successfully exchanged skills on our platform.
+                Read about the experiences of students who have successfully
+                exchanged skills on our platform.
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {testimonials.map((testimonial, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="glassmorphism p-6 rounded-xl relative"
                 >
                   <div className="mb-6 text-5xl text-primary/20">"</div>
@@ -183,18 +185,22 @@ const Index = () => {
                   </p>
                   <div className="flex flex-col">
                     <span className="font-semibold">{testimonial.author}</span>
-                    <span className="text-sm text-muted-foreground">{testimonial.role}</span>
-                    <span className="text-xs text-muted-foreground">{testimonial.university}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {testimonial.role}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {testimonial.university}
+                    </span>
                   </div>
                 </div>
               ))}
             </div>
           </div>
         </section>
-        
+
         {/* Showcase matching */}
         <MatchSection />
-        
+
         {/* CTA Section */}
         <section className="py-20 px-6 md:px-8 bg-gradient-to-br from-primary/90 to-secondary/90 text-white">
           <div className="max-w-4xl mx-auto text-center">
@@ -202,21 +208,25 @@ const Index = () => {
               Ready to Start Your Skill Exchange Journey?
             </h2>
             <p className="text-xl mb-8 text-white/80 max-w-2xl mx-auto">
-              Join thousands of students who are already expanding their skillsets 
-              and building meaningful connections.
+              Join thousands of students who are already expanding their
+              skillsets and building meaningful connections.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button size="lg" variant="secondary" className="text-primary">
                 Create Your Profile
               </Button>
-              <Button size="lg" variant="outline" className="text-white border-white/30 hover:bg-white/10">
+              <Button
+                size="lg"
+                variant="outline"
+                className="text-white border-white/30 hover:bg-white/10"
+              >
                 Learn More
               </Button>
             </div>
           </div>
         </section>
       </main>
-      
+
       <Footer />
     </div>
   );
