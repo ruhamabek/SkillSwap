@@ -83,7 +83,7 @@ const Profile = () => {
               </Avatar>
 
               <div className="flex gap-2 mt-4">
-                <Button variant="secondary" className="gap-2">
+                <Button variant="secondary" className="gap-2" onClick={() => {navigate("/connections")}}>
                   <MessageSquare className="h-4 w-4" /> Message
                 </Button>
                 <Button variant="outline" size="icon">

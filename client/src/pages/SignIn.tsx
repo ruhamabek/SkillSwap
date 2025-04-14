@@ -66,7 +66,7 @@ const SignIn = () => {
             });
           },
           onSuccess: async () => {
-            navigate("/profile");
+            navigate("/profile-setup");
             toast({
               title: "Welcome back!",
               description: "You have successfully signed in.",
@@ -298,7 +298,7 @@ const SignIn = () => {
               onClick={async () => {
                 await authClient.signIn.social({
                   provider: "google",
-                  callbackURL: "http://localhost:8080/profile",
+                  callbackURL: "http://localhost:8080/profile-setup",
                   fetchOptions: {
                     onError: (ctx) => {
                       toast({
@@ -309,7 +309,7 @@ const SignIn = () => {
                     },
                     onSuccess: async () => {
                       // router.push("/auth/signin");
-                      navigate("/profile");
+                      navigate("/profile-setup");
                       toast({
                         title: "Account created successfully",
                         description:

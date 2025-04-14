@@ -118,7 +118,7 @@ const Header = () => {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center space-x-2">
-          <Button variant="ghost" size="icon" aria-label="Search">
+          <Button variant="ghost" size="icon" aria-label="Search" onClick={() => navigate("/browse")}>
             <Search className="h-5 w-5" />
           </Button>
 
@@ -139,9 +139,9 @@ const Header = () => {
                 )}
               </Button>
 
-              <Button variant="ghost" size="icon" aria-label="Messages">
+              {/* <Button variant="ghost" size="icon" aria-label="Messages">
                 <MessageCircle className="h-5 w-5" />
-              </Button>
+              </Button> */}
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -163,7 +163,7 @@ const Header = () => {
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/messages")}>
+                  <DropdownMenuItem onClick={() => navigate("/connections")}>
                     <MessageCircle className="mr-2 h-4 w-4" />
                     <span>Messages</span>
                   </DropdownMenuItem>
@@ -249,7 +249,7 @@ const Header = () => {
                     My Profile
                   </Link>
                   <Link
-                    to="/messages"
+                    to="/connections"
                     className="block px-4 py-2 text-sm text-foreground hover:bg-muted rounded-md"
                   >
                     Messages
