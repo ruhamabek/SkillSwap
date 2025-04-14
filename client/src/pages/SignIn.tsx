@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Lock } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
+
 import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
@@ -32,7 +32,7 @@ type FormValues = z.infer<typeof formSchema>;
 const SignIn = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { login } = useAuth();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FormValues>({
