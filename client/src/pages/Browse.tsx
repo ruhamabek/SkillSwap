@@ -10,6 +10,7 @@ import { Search, Filter } from "lucide-react";
 import { toast } from "sonner";
 import Payment from "@/api/paymentApi";
 import Payments from "@/api/connectionApi";
+import { authClient } from "@/lib/auth-client";
 
 const Browse = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,7 +20,8 @@ const Browse = () => {
   const { getALLProfileMutation } = useProfile();
   const { paymentMutation } = Payment();
   const { requestMutation, AskMutation } = Payments();
-
+  const { data: session } = authClient.useSession();
+   const loggedInUserId = session?.user.id;
   // Your exact datas object
   const datas = {
     id: 10,
@@ -69,14 +71,19 @@ const Browse = () => {
   //top rated are not editable
   useEffect(() => {
     window.scrollTo(0, 0);
+  
     const fetchProfiles = async () => {
       try {
         const response = await getALLProfileMutation.mutateAsync();
-        setProfiles(response);
+        const filteredProfiles = response.filter(
+          (profile: any) => profile.userid !== loggedInUserId
+        );
+        setProfiles(filteredProfiles);
       } catch (error) {
         console.error("Error fetching profiles:", error);
       }
     };
+  
     fetchProfiles();
   }, []);
 
