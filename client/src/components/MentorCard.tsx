@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { MessageSquare, Star, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client";
+import { useNavigate } from "react-router-dom";
 
 interface MentorCardProps {
   profile: {
@@ -40,6 +42,9 @@ const MentorCard = ({
         .join("")
         .toUpperCase()
     : "??";
+
+    const navigate = useNavigate();
+    const {data: session} = authClient.useSession();
 
   return (
     <Card
@@ -162,7 +167,7 @@ const MentorCard = ({
           <Button
             variant="default"
             className="w-full"
-            onClick={() => onConnect(profile.id)}
+            onClick={() => session ?onConnect(profile.id) : navigate("/sign-up")}
           >
             Request Connection
           </Button>
