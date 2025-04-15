@@ -199,7 +199,7 @@ const Index = () => {
         </section>
 
         {/* Showcase matching */}
-        <MatchSection />
+        {/* <MatchSection /> */}
 
         {/* CTA Section */}
         <section className="py-20 px-6 md:px-8 bg-gradient-to-br from-primary/90 to-secondary/90 text-white">
@@ -212,15 +212,8 @@ const Index = () => {
               skillsets and building meaningful connections.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button size="lg" variant="secondary" className="text-primary">
+              <Button size="lg"  className="text-white bg-blue-500 "onClick={() => {navigate("/sign-up")}}>
                 Create Your Profile
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-white border-white/30 hover:bg-white/10"
-              >
-                Learn More
               </Button>
             </div>
           </div>
