@@ -164,7 +164,7 @@ const Header = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/connections")}>
                     <MessageCircle className="mr-2 h-4 w-4" />
-                    <span>Messages</span>
+                    <span>Connections</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
