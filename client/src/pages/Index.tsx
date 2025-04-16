@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, BookOpen, MessageSquare, Users, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { authClient } from '@/lib/auth-client';
+import Chatbot from '@/components/Chatbot';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -219,7 +220,7 @@ const Index = () => {
           </div>
         </section>
       </main>
-
+      <Chatbot/>
       <Footer />
     </div>
   );

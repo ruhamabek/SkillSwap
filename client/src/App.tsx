@@ -14,7 +14,7 @@ import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import ProfileSetup from "./pages/ProfileSetup";
 import Home from "./pages/Home";
-import Chatbot from "./pages/Chatbot";
+ 
 
 const queryClient = new QueryClient();
 
@@ -32,7 +32,6 @@ const App = () => (
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="pay/:id" element={<Payment />} />
-          <Route path="/chatbot" element={<Chatbot />} />
           <Route
             path="/profile-setup"
             element={
