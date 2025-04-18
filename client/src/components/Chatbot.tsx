@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { GoogleGenAI } from "@google/genai";
 import { MessageCircle, X, Bot } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import useProfile from "@/api/ProfileApi";
 
 const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
@@ -10,26 +12,26 @@ const Chatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(true);
   const [history, setHistory] = useState<
-  { role: "user" | "model"; text: string }[]
->([
-  { role: "user", text: "" },
-  {
-    role: "model",
-    text: "Hey there! Got SkillSwap questions? I’m all ears 👂✨",
-  },
-]);
+    { role: "user" | "model"; text: string }[]
+  >([
+    { role: "user", text: "" },
+    {
+      role: "model",
+      text: "Hey there! Got SkillSwap questions? I’m all ears 👂✨",
+    },
+  ]);
+
+  const { data: session } = authClient.useSession();
+  const { profile } = useProfile();
 
   useEffect(() => {
     const initializeChat = async () => {
-      const chat = ai.chats.create({
-        model: "gemini-2.0-flash",
-        history: history.map((msg) => ({
-          role: msg.role,
-          parts: [{ text: msg.text }],
-        })),
-        config: {
-          systemInstruction: `
-You are a helpful assistant for the SkillSwap platform — an online community where learners and mentors connect to exchange skills.
+      const personalizedInstruction = session
+        ? `You are a helpful assistant for the SkillSwap platform — an online community where learners and mentors connect to exchange skills.
+
+The user is logged in. Based on their profile, they are currently learning: ${
+          profile?.skillsToLearn?.join(", ") || "unknown skills"
+        }. Provide suggestions, support, and contextual help around those topics in addition to the platform guidance.
 
 Only answer questions based on the SkillSwap system. If users ask questions unrelated to the platform, politely redirect them.
 
@@ -41,8 +43,29 @@ Key features of SkillSwap:
 - Chat is available between mentor and learner after a session is booked.
 - All users must follow community guidelines focused on respect, growth, and collaboration.
 
-Always respond with clarity, positivity, and support. Keep answers short and to the point unless asked for more detail.
-          `,
+Always respond with clarity, positivity, and support. Keep answers short and to the point unless asked for more detail.`
+        : `You are a helpful assistant for the SkillSwap platform — an online community where learners and mentors connect to exchange skills.
+
+Only answer questions based on the SkillSwap system. If users ask questions unrelated to the platform, politely redirect them.
+
+Key features of SkillSwap:
+- Users can offer and request skills (e.g. coding, public speaking, graphic design).
+- Mentorship is free and time-slotted, based on availability.
+- Users have profiles showing their skills, ratings, and reviews.
+- Sessions can be booked directly via the platform scheduler.
+- Chat is available between mentor and learner after a session is booked.
+- All users must follow community guidelines focused on respect, growth, and collaboration.
+
+Always respond with clarity, positivity, and support. Keep answers short and to the point unless asked for more detail.`;
+
+      const chat = ai.chats.create({
+        model: "gemini-2.0-flash",
+        history: history.map((msg) => ({
+          role: msg.role,
+          parts: [{ text: msg.text }],
+        })),
+        config: {
+          systemInstruction: personalizedInstruction,
         },
       });
 
@@ -50,7 +73,7 @@ Always respond with clarity, positivity, and support. Keep answers short and to 
     };
 
     initializeChat();
-  }, []);
+  }, [session, profile]);
 
   const handleSend = async () => {
     if (!input.trim() || !chatInstance) return;
@@ -67,9 +90,7 @@ Always respond with clarity, positivity, and support. Keep answers short and to 
 
   return (
     <div className="fixed bottom-5 right-5 z-50">
-      {/* Tooltip and Chat Toggle */}
       <div className="relative flex items-center gap-2">
-        {/* Tooltip */}
         {showTooltip && !isOpen && (
           <div className="bg-white text-md border border-gray-300 px-3 py-2 rounded-lg shadow-md max-w-[220px] relative">
             <div className="flex items-start gap-2 pr-5">
@@ -85,7 +106,6 @@ Always respond with clarity, positivity, and support. Keep answers short and to 
           </div>
         )}
 
-        {/* Toggle Button */}
         <button
           onClick={() => {
             setIsOpen(!isOpen);
@@ -103,29 +123,28 @@ Always respond with clarity, positivity, and support. Keep answers short and to 
         </button>
       </div>
 
-      {/* Chat Window */}
       {isOpen && (
         <div className="mt-3 w-80 h-[500px] bg-white shadow-xl rounded-xl flex flex-col border overflow-hidden">
           <div className="bg-blue-500 text-white text-center px-4 py-2 font-semibold text-lg">
             SkillSwap Bot
           </div>
 
-            <div className="flex-1 overflow-y-auto p-3 space-y-2 text-sm">
+          <div className="flex-1 overflow-y-auto p-3 space-y-2 text-sm">
             {history
               .filter((msg) => msg.text.trim() !== "")
               .map((msg, index) => (
-              <div
-                key={index}
-                className={`p-2 rounded-md ${
-                msg.role === "user"
-                  ? "bg-blue-100 self-end ml-auto max-w-[70%]"
-                  : "bg-gray-100 self-start mr-auto max-w-[70%]"
-                }`}
-              >
-                {msg.text}
-              </div>
+                <div
+                  key={index}
+                  className={`p-2 rounded-md ${
+                    msg.role === "user"
+                      ? "bg-blue-100 self-end ml-auto max-w-[70%]"
+                      : "bg-gray-100 self-start mr-auto max-w-[70%]"
+                  }`}
+                >
+                  {msg.text}
+                </div>
               ))}
-            </div>
+          </div>
 
           <div className="border-t p-2 flex">
             <input
