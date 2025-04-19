@@ -6,14 +6,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Browse from "./pages/Browse";
-import Connections from "./pages/connections";
+import Connections from "./pages/ConnectionNotif";
 import Profile from "./pages/Profile";
 import SignIn from "./pages/SignIn";
-import Payment from "./pages/payment";
+import Payment from "./pages/Payment";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import ProfileSetup from "./pages/ProfileSetup";
-import Home from "./pages/Home";
+import Messanger from "./pages/Messanger";
  
 
 const queryClient = new QueryClient();
@@ -28,7 +28,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/browse" element={<Browse />} />
           <Route path="/connections" element={<Connections />} />
-          <Route path="/chat/:id" element={<Home />} />
+          <Route path="/chat/:id" element={<Messanger />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="pay/:id" element={<Payment />} />
