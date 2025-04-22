@@ -22,13 +22,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
 import Payments from "@/api/connectionApi";
+import useProfile from "@/api/ProfileApi";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [formData, setFormData] = useState({
+    image: "",
+  });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
+  const { profile } = useProfile();
   const { data: session, isPending, error, refetch } = authClient.useSession();
   const { CountrequestMutation } = Payments();
 
@@ -64,7 +69,13 @@ const Header = () => {
       return () => clearInterval(interval);
     }
   }, [session]);
-
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        image: profile.image || "",
+      });
+    }
+  }, [profile]);
   const handleLogout = () => {
     authClient.signOut();
     navigate("/");
@@ -117,7 +128,12 @@ const Header = () => {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center space-x-2">
-          <Button variant="ghost" size="icon" aria-label="Search" onClick={() => navigate("/browse")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Search"
+            onClick={() => navigate("/browse")}
+          >
             <Search className="h-5 w-5" />
           </Button>
 
@@ -146,9 +162,12 @@ const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="rounded-full">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={session.user.image} />
+                      <AvatarImage
+                        src={formData?.image || session.user.image}
+                      />
                       <AvatarFallback className="bg-primary/10 text-primary">
-                        {session.user.name?.[0] ||
+                        {formData?.image?.[0] ||
+                          session.user.name?.[0] ||
                           session.user?.email?.[0]?.toUpperCase() ||
                           "U"}
                       </AvatarFallback>
