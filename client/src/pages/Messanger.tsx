@@ -5,6 +5,7 @@ import useOnlineUsers from "@/hooks/useOnlineUsers";
 import { useParams } from "react-router-dom";
 import Avatar from "@/components/Avatar";
 import uploadFile from "../helpers/uploadFile";
+import Header from "@/components/Header";
 
 export default function Home() {
   const [socket, setSocket] = useState(null);
@@ -160,7 +161,8 @@ export default function Home() {
   return (
     <div>
       <header className="sticky top-0 h-16 bg-white">
-        <div className="flex items-center gap-4 p-4">
+        <Header />
+        <div className="flex items-center  mt-14 gap-4 p-4">
           <div>
             <Avatar
               width={50}

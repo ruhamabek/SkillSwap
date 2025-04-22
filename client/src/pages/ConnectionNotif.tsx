@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import payments from "@/api/connectionApi";
+import Header from "@/components/Header";
 
 export default function ConnectionsPage() {
   const [requests, setRequests] = useState([]);
@@ -131,7 +132,8 @@ export default function ConnectionsPage() {
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Connections</h1>
+      <Header />
+      <h1 className="text-2xl font-bold mb-5 mt-10">Connections</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Pending Requests Column */}
