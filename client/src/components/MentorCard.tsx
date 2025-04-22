@@ -21,9 +21,10 @@ interface MentorCardProps {
     location?: string;
     bio?: string;
     isPremium?: boolean;
+    image: string;
   };
   isLoading: boolean;
-  onConnect: (id: string) => void;
+  onConnect: (id: string, image: string) => void;
   onSubmit: (e: React.FormEvent, id: string) => void;
   className?: string;
 }
@@ -43,8 +44,8 @@ const MentorCard = ({
         .toUpperCase()
     : "??";
 
-    const navigate = useNavigate();
-    const {data: session} = authClient.useSession();
+  const navigate = useNavigate();
+  const { data: session } = authClient.useSession();
 
   return (
     <Card
@@ -63,9 +64,17 @@ const MentorCard = ({
       <CardContent className="pt-6 flex-grow">
         <div className="flex flex-col items-center text-center">
           <Avatar className="h-20 w-20 border-2 border-border mb-4">
-            <AvatarFallback className="bg-primary/10 text-primary font-medium text-lg">
-              {initials}
-            </AvatarFallback>
+            {profile.image ? (
+              <img
+                src={profile.image}
+                alt={profile.name || "Mentor"}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <AvatarFallback className="bg-primary/10 text-primary font-medium text-lg">
+                {initials}
+              </AvatarFallback>
+            )}
           </Avatar>
 
           <h3 className="text-lg font-semibold">
@@ -167,12 +176,15 @@ const MentorCard = ({
           <Button
             variant="default"
             className="w-full"
-            onClick={() => session ?onConnect(profile.id) : navigate("/sign-up")}
+            onClick={() =>
+              session
+                ? onConnect(profile.id, profile.image)
+                : navigate("/sign-up")
+            }
           >
             Request Connection
           </Button>
         )}
- 
       </CardFooter>
     </Card>
   );
