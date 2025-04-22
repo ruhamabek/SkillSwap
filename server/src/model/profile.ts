@@ -29,6 +29,9 @@ const profileSchema = new mongoose.Schema({
   userid: {
     type: String,
   },
+  image: {
+    type: String,
+  },
 });
 
 const Profile = mongoose.model("Profile", profileSchema, "profiles");

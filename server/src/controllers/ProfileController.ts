@@ -51,6 +51,7 @@ const createProfile = async (req: Request, res: Response) => {
       skillsToTeach: body.skillsToTeach,
       skillsToLearn: body.skillsToLearn,
       userid: user.id,
+      image: body?.image || null,
     });
 
     const savedProfile = await newProfile.save();
