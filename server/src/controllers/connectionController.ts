@@ -54,24 +54,64 @@ const getacceptedbyConnections = async (req: Request, res: Response) => {
 const respondToRequest = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params; // receiver
-    const { senderId, action } = req.body; // sender and action ('accept' or 'reject')
+    const { senderId, action } = req.body; // sender and action ('accept', 'reject', or 'complete')
 
-    // Find the connection request
-    const connectionRequest = await ConnectionRequest.findOne({
-      sender: senderId,
-      receiver: userId,
-      status: "pending",
-    });
-
-    if (!connectionRequest) {
-      return res.status(404).json({ message: "Connection request not found." });
+    if (!["accept", "reject", "complete"].includes(action)) {
+      return res.status(400).json({ message: "Invalid action specified." });
     }
 
     if (action === "accept") {
-      connectionRequest.status = "accepted";
-      await connectionRequest.save();
+      // Find and update pending request to accepted
+      const connectionRequest = await ConnectionRequest.findOneAndUpdate(
+        {
+          sender: senderId,
+          receiver: userId,
+          status: "pending",
+        },
+        { status: "accepted" },
+        { new: true }
+      );
+
+      if (!connectionRequest) {
+        return res
+          .status(404)
+          .json({ message: "Pending connection request not found." });
+      }
     } else if (action === "reject") {
-      await ConnectionRequest.findByIdAndDelete(connectionRequest._id);
+      // Find and delete pending request
+      const deletedRequest = await ConnectionRequest.findOneAndDelete({
+        sender: senderId,
+        receiver: userId,
+        status: "pending",
+      });
+
+      if (!deletedRequest) {
+        return res
+          .status(404)
+          .json({ message: "Pending connection request not found." });
+      }
+    } else if (action === "complete") {
+      // Delete connection in both directions
+      const deleteResults = await Promise.all([
+        ConnectionRequest.findOneAndDelete({
+          sender: senderId,
+          receiver: userId,
+          status: "accepted",
+        }),
+        ConnectionRequest.findOneAndDelete({
+          sender: userId,
+          receiver: senderId,
+          status: "accepted",
+        }),
+      ]);
+
+      // Check if at least one connection was found and deleted
+      const wasDeleted = deleteResults.some((result) => result !== null);
+      if (!wasDeleted) {
+        return res.status(404).json({
+          message: "No accepted connection requests found between these users.",
+        });
+      }
     }
 
     res.json({ success: true });
@@ -81,7 +121,8 @@ const respondToRequest = async (req: Request, res: Response) => {
 };
 const requestToconnect = async (req: Request, res: Response) => {
   const { userId } = req.params; // sender
-  const { action } = req.body;
+  const { action, image } = req.body;
+  console.log("action ", action, "image ", image);
 
   // Check if a request already exists
   const existingRequest = await ConnectionRequest.findOne({
@@ -129,6 +170,7 @@ const requestToconnect = async (req: Request, res: Response) => {
       sender: userId,
       receiver: action,
       status: "pending",
+      images: image,
     });
 
     await newRequest.save();
