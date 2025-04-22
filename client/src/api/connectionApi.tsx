@@ -86,12 +86,18 @@ const Payments = () => {
     onSuccess: () => {},
   });
   const AskMutation = useMutation({
-    mutationFn: async (action: string) => {
+    mutationFn: async ({
+      action,
+      image,
+    }: {
+      action: string;
+      image: string;
+    }) => {
       if (!session.data?.user?.id) return null;
 
       const response = await axios.post(
         `${API_BASE_URL}/ask/${id}`,
-        { action },
+        { action, image },
         {
           withCredentials: true,
         }
