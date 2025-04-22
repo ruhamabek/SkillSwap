@@ -50,7 +50,7 @@ const Profile = () => {
 
   const user = {
     name: session.user.name,
-    avatar: session.user.image,
+    avatar: profile?.image,
     title: profile?.title,
     location: profile?.location,
     university: profile?.university,
@@ -71,66 +71,74 @@ const Profile = () => {
         <div className="max-w-7xl mx-auto px-6 md:px-8">
           {/* Profile Header */}
           <div className="flex flex-col md:flex-row gap-8 mb-12">
+            {/* Profile Picture and Actions */}
             <div className="flex flex-col items-center md:items-start">
-              <Avatar className="h-32 w-32 border-4 border-border">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="text-3xl">
-                  {user.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
+              <div className="relative">
+                <div className="mb-4">
+                  <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="w-32 h-32 object-cover rounded-full mx-auto border-4 border-primary shadow-lg"
+                  />
+                </div>
+                <div
+                  className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-2 shadow-md cursor-pointer"
+                  onClick={() => navigate("/profile-setup")}
+                >
+                  <Edit className="h-5 w-5" />
+                </div>
+              </div>
 
-              <div className="flex gap-2 mt-4">
-                <Button variant="secondary" className="gap-2" onClick={() => {navigate("/connections")}}>
+              <div className="flex gap-3 mt-6">
+                <Button
+                  variant="secondary"
+                  className="gap-2 px-4 py-2 shadow-md"
+                  onClick={() => navigate("/connections")}
+                >
                   <MessageSquare className="h-4 w-4" /> Message
                 </Button>
-                <Button variant="outline" size="icon">
-                  <Share className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex-grow md:border-l md:pl-8 md:border-border">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
-                <div>
-                  <h1 className="text-3xl font-bold">{user.name}</h1>
-                  <p className="text-muted-foreground">{user.title}</p>
-                </div>
                 <Button
                   variant="outline"
-                  className="mt-2 md:mt-0 gap-2"
-                  onClick={() => (window.location.href = "/profile-setup")}
+                  className="gap-2 px-4 py-2 shadow-md"
+                  onClick={() => navigate("/profile-setup")}
                 >
                   <Edit className="h-4 w-4" /> Edit Profile
                 </Button>
               </div>
+            </div>
+            {/* Profile Details */}
+            <div className="flex-grow md:border-l md:pl-8 md:border-border">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                <div>
+                  <h1 className="text-4xl font-extrabold">{user.name}</h1>
+                  <p className="text-muted-foreground text-lg">{user.title}</p>
+                </div>
+              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div className="flex items-center gap-2">
-                  <GraduationCap className="h-5 w-5 text-muted-foreground" />
-                  <span>{user.university}</span>
+                  <GraduationCap className="h-5 w-5 text-primary" />
+                  <span className="text-lg font-medium">{user.university}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-muted-foreground" />
-                  <span>{user.location}</span>
+                  <MapPin className="h-5 w-5 text-primary" />
+                  <span className="text-lg font-medium">{user.location}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <User className="h-5 w-5 text-muted-foreground" />
-                  <span>
-                    Joined at {new Date(user.joinDate).toLocaleDateString()}
+                  <User className="h-5 w-5 text-primary" />
+                  <span className="text-lg font-medium">
+                    Joined {new Date(user.joinDate).toLocaleDateString()}
                   </span>
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-6 mb-6">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                   <div className="flex">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`h-4 w-4 ${
+                        className={`h-5 w-5 ${
                           i < Math.floor(user.rating)
                             ? "text-amber-500 fill-amber-500"
                             : "text-muted"
@@ -138,22 +146,26 @@ const Profile = () => {
                       />
                     ))}
                   </div>
-                  <span className="font-medium">{user.rating}</span>
+                  <span className="text-lg font-medium">{user.rating}</span>
                   <span className="text-muted-foreground text-sm">
                     ({user.reviewCount} reviews)
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                   <Zap className="h-5 w-5 text-primary" />
-                  <span className="font-medium">{user.completedExchanges}</span>
+                  <span className="text-lg font-medium">
+                    {user.completedExchanges}
+                  </span>
                   <span className="text-muted-foreground text-sm">
                     exchanges completed
                   </span>
                 </div>
               </div>
 
-              <p className="text-muted-foreground">{user.bio}</p>
+              <p className="text-muted-foreground text-lg leading-relaxed">
+                {user.bio}
+              </p>
             </div>
           </div>
 
