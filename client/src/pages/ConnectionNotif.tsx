@@ -94,7 +94,15 @@ export default function ConnectionsPage() {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => handleRespond(connection.sender, "reject")}
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      "Are you sure you want to reject this request?"
+                    )
+                  ) {
+                    handleRespond(connection.sender, "reject");
+                  }
+                }}
               >
                 Reject
               </Button>
@@ -109,7 +117,15 @@ export default function ConnectionsPage() {
                   size="icon"
                   variant="outline"
                   className="rounded-full"
-                  onClick={() => handleRespond(connection.sender, "complete")}
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        "Are you sure you want to remove this connection?"
+                      )
+                    ) {
+                      handleRespond(connection.sender, "complete");
+                    }
+                  }}
                 >
                   X
                 </Button>
@@ -118,7 +134,15 @@ export default function ConnectionsPage() {
                   size="icon"
                   variant="outline"
                   className="rounded-full"
-                  onClick={() => handleRespond(connection.receiver, "complete")}
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        "Are you sure you want to remove this connection?"
+                      )
+                    ) {
+                      handleRespond(connection.receiver, "complete");
+                    }
+                  }}
                 >
                   X
                 </Button>
