@@ -54,7 +54,7 @@ export default function ConnectionsPage() {
     }
   };
 
-  const ConnectionCard = ({ connection, type }) => {
+  const ConnectionCard = ({ connection, type, display, image }) => {
     const user =
       type === "request"
         ? connection.sender
@@ -70,7 +70,7 @@ export default function ConnectionsPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={user.image} />
+              <AvatarImage src={image} />
               <AvatarFallback className="bg-primary/10 text-primary">
                 {user.name?.[0] || "U"}
               </AvatarFallback>
@@ -99,9 +99,30 @@ export default function ConnectionsPage() {
               </Button>
             </div>
           ) : (
-            <Button asChild size="sm">
-              <Link to={`/chat/${user}`}>Message</Link>
-            </Button>
+            <div className="flex gap-2">
+              <Button asChild size="icon" className="rounded-full">
+                <Link to={`/chat/${user}`}>💬</Link>
+              </Button>
+              {!display ? (
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="rounded-full"
+                  onClick={() => handleRespond(connection.sender, "complete")}
+                >
+                  X
+                </Button>
+              ) : (
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="rounded-full"
+                  onClick={() => handleRespond(connection.receiver, "complete")}
+                >
+                  X
+                </Button>
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -125,6 +146,8 @@ export default function ConnectionsPage() {
               <ConnectionCard
                 key={request._id}
                 connection={request}
+                image={request.images}
+                display={false}
                 type="request"
               />
             ))
@@ -140,6 +163,8 @@ export default function ConnectionsPage() {
               <ConnectionCard
                 key={conn._id}
                 connection={conn}
+                image={conn.images}
+                display={false}
                 type="accepted"
               />
             ))
@@ -155,6 +180,8 @@ export default function ConnectionsPage() {
               <ConnectionCard
                 key={conn._id}
                 connection={conn}
+                image={conn.images}
+                display={true}
                 type="acceptedBy"
               />
             ))

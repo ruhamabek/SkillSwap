@@ -21,7 +21,7 @@ const Browse = () => {
   const { paymentMutation } = Payment();
   const { requestMutation, AskMutation } = Payments();
   const { data: session } = authClient.useSession();
-   const loggedInUserId = session?.user.id;
+  const loggedInUserId = session?.user.id;
   // Your exact datas object
   const datas = {
     id: 10,
@@ -71,7 +71,7 @@ const Browse = () => {
   //top rated are not editable
   useEffect(() => {
     window.scrollTo(0, 0);
-  
+
     const fetchProfiles = async () => {
       try {
         const response = await getALLProfileMutation.mutateAsync();
@@ -83,7 +83,7 @@ const Browse = () => {
         console.error("Error fetching profiles:", error);
       }
     };
-  
+
     fetchProfiles();
   }, []);
 
@@ -128,10 +128,10 @@ const Browse = () => {
     }
   };
 
-  const handleConnect = async (action: string) => {
+  const handleConnect = async (action: string, image: string) => {
     // const { getALLconnectMutation, responseMutation } = Payment();
-    console.log("this is mentore is", action);
-    const response = await AskMutation.mutateAsync(action);
+    // console.log("this is mentore is", action, "this is image ", image);
+    const response = await AskMutation.mutateAsync({ action, image });
 
     console.log("this is response", response);
     toast.success(`${response}`);
@@ -232,7 +232,9 @@ const Browse = () => {
                         university: profile.university,
                         location: profile.location,
                         bio: profile.bio,
-                        isPremium: index < 3, // First 3 are premium
+                        image: null,
+                        isPremium: index < 3,
+                        // First 3 are premium
                       }}
                       isLoading={loadingId === profile._id}
                       onConnect={handleConnect}
@@ -255,6 +257,7 @@ const Browse = () => {
                         university: profile.university,
                         location: profile.location,
                         bio: profile.bio,
+                        image: profile.image,
                         // isPremium: index < 3, // First 3 are premium
                       }}
                       isLoading={loadingId === profile._id}
