@@ -45,7 +45,10 @@ export default function socketHandler(server: any) {
           { sender: user?.userid, receiver: userId },
         ],
       })
-        .populate("messages")
+        .populate({
+          path: "messages",
+          select: "text imageUrl videoUrl codeContent codeLanguage msgByUserId createdAt"
+        })
         .sort({ updatedAt: -1 });
 
       socket.emit("message", getConversationMessage?.messages || []);
@@ -77,6 +80,8 @@ export default function socketHandler(server: any) {
         text: data.text,
         imageUrl: data.imageUrl,
         videoUrl: data.videoUrl,
+        codeContent: data.codeContent,
+        codeLanguage: data.codeLanguage,
         msgByUserId: data?.msgByUserId,
       });
       const saveMessage = await message.save();
@@ -94,7 +99,10 @@ export default function socketHandler(server: any) {
           { sender: data?.receiver, receiver: data?.sender },
         ],
       })
-        .populate("messages")
+        .populate({
+          path: "messages",
+          select: "text imageUrl videoUrl codeContent codeLanguage msgByUserId createdAt"
+        })
         .sort({ updatedAt: -1 });
 
       io.to(data?.sender).emit(

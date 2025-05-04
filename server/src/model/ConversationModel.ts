@@ -14,6 +14,15 @@ const messageSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    // Add these new fields for code support
+    codeContent: {
+      type: String,
+      default: "",
+    },
+    codeLanguage: {
+      type: String,
+      default: "javascript", // Default to JavaScript
+    },
     seen: {
       type: Boolean,
       default: false,

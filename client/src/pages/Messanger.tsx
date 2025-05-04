@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import Avatar from "@/components/Avatar";
 import uploadFile from "../helpers/uploadFile";
 import Header from "@/components/Header";
+import CodeEditor from "@/components/CodeEditor";
 
 export default function Home() {
   const [socket, setSocket] = useState(null);
@@ -17,7 +18,11 @@ export default function Home() {
     text: "",
     imageUrl: "",
     videoUrl: "",
+    codeContent: "", // New
+    codeLanguage: "javascript", // New
   });
+
+  const [inputMode, setInputMode] = useState<"text" | "code">("text");
 
   const [loading, setLoading] = useState(false);
   const [allMessage, setAllMessage] = useState([]);
@@ -138,23 +143,29 @@ export default function Home() {
   };
   const handleSendMessage = (e) => {
     e.preventDefault();
+    
+    if (socket && (
+      message.text || 
+      message.imageUrl || 
+      message.videoUrl || 
+      message.codeContent
+    )) {
+      socket.emit("new message", {
+        ...message,
+        sender: session?.user.id,
+        receiver: id,
+        msgByUserId: session?.user.id
+      });
 
-    if (message.text || message.imageUrl || message.videoUrl) {
-      if (socket) {
-        socket.emit("new message", {
-          sender: session?.user.id,
-          receiver: id,
-          text: message.text,
-          imageUrl: message.imageUrl,
-          videoUrl: message.videoUrl,
-          msgByUserId: session?.user.id,
-        });
-        setMessage({
-          text: "",
-          imageUrl: "",
-          videoUrl: "",
-        });
-      }
+      // Reset state
+      setMessage({
+        text: "",
+        imageUrl: "",
+        videoUrl: "",
+        codeContent: "",
+        codeLanguage: "javascript"
+      });
+      setInputMode("text");
     }
   };
 
@@ -270,6 +281,16 @@ export default function Home() {
 
       <section className="h-16 bg-white flex items-center px-4">
         <div className="relative ">
+          {/*Button to toggle input mode*/}
+          <button
+            type="button"
+            onClick={() => setInputMode(prev => prev === "text" ? "code" : "text")}
+            className={`p-2 rounded-lg ${
+              inputMode === "code" ? "bg-blue-500 text-white" : "bg-gray-200"
+            }`}
+          >
+            {inputMode === "code" ? "</> Code" : "💬 Text"}
+          </button>
           <button
             onClick={handleUploadImageVideoOpen}
             className="flex justify-center items-center w-11 h-11 rounded-full hover:bg-primary hover:text-white"
@@ -320,13 +341,42 @@ export default function Home() {
 
         {/**input box */}
         <form className="h-full w-full flex gap-2" onSubmit={handleSendMessage}>
-          <input
-            type="text"
-            placeholder="Type here message..."
-            className="py-1 px-4 outline-none w-full h-full"
-            value={message.text}
-            onChange={handleOnChange}
-          />
+          {inputMode === "code" ? (
+            <div className="flex-1 flex flex-col gap-2">
+              <select
+                value={message.codeLanguage}
+                onChange={(e) => setMessage(prev => ({
+                  ...prev,
+                  codeLanguage: e.target.value
+                }))}
+                className="border p-1 rounded-lg bg-white"
+              >
+                <option value="javascript">JavaScript</option>
+                <option value="python">Python</option>
+                <option value="html">HTML</option>
+                <option value="cpp">C++</option>
+                <option value="java">Java</option>
+              </select>
+              <CodeEditor
+                code={message.codeContent}
+                language={message.codeLanguage}
+                onChange={(value) => setMessage(prev => ({
+                  ...prev,
+                  codeContent: value
+                }))}
+              />
+            </div>
+          ) : (
+            <input
+              type="text"
+              placeholder="Type message..."
+              value={message.text}
+              onChange={(e) => setMessage(prev => ({
+                ...prev,
+                text: e.target.value
+              }))}
+            />
+          )}
           <button className="text-primary hover:text-secondary">
             {/* <IoMdSend size={28} />
              */}
