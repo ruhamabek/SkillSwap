@@ -1,18 +1,25 @@
 import React from "react";
+import { cn } from "@/lib/utils"; // Ensure this utility exists
 
-const Avatar = ({ userId, name, imageUrl, width, height }) => {
-  let avatarName = "";
+interface AvatarProps {
+  userId?: string;
+  name?: string;
+  imageUrl?: string;
+  width?: number;
+  height?: number;
+  className?: string;
+  isOnline?: boolean; // Added online status prop
+}
 
-  if (name) {
-    const splitName = name?.split(" ");
-
-    if (splitName.length > 1) {
-      avatarName = splitName[0][0] + splitName[1][0];
-    } else {
-      avatarName = splitName[0][0];
-    }
-  }
-
+const Avatar: React.FC<AvatarProps> = ({
+  userId,
+  name,
+  imageUrl,
+  width = 40,
+  height = 40,
+  className,
+  isOnline = false
+}) => {
   const bgColor = [
     "bg-slate-200",
     "bg-teal-200",
@@ -25,50 +32,48 @@ const Avatar = ({ userId, name, imageUrl, width, height }) => {
     "bg-blue-200",
   ];
 
-  const randomNumber = Math.floor(Math.random() * 9);
+  const randomNumber = Math.floor(Math.random() * bgColor.length);
+  const avatarName = name?.split(" ").map(word => word[0]).join("").toUpperCase();
 
-  const isOnline = userId ? false : false; // Replace with actual online status check
   return (
     <div
-      className={`text-slate-800 rounded-full font-bold relative`}
-      style={{ width: width + "px", height: height + "px" }}
+      className={cn(
+        "relative inline-block rounded-full font-bold",
+        className
+      )}
+      style={{ 
+        width: `${width}px`,
+        height: `${height}px`,
+        fontSize: `${Math.min(width, height) * 0.4}px`
+      }}
     >
       {imageUrl ? (
         <img
           src={imageUrl}
-          width={width}
-          height={height}
-          alt={name}
-          className="overflow-hidden rounded-full"
+          alt={name || "User avatar"}
+          className="w-full h-full rounded-full object-cover"
         />
-      ) : name ? (
-        <div
-          style={{ width: width + "px", height: height + "px" }}
-          className={`overflow-hidden rounded-full flex justify-center items-center text-lg ${bgColor[randomNumber]}`}
-        >
-          {avatarName}
-        </div>
       ) : (
         <div
-          style={{
-            width: width + "px",
-            height: height + "px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "#e5e7eb", // Default gray background
-            borderRadius: "50%",
-          }}
+          className={cn(
+            "w-full h-full rounded-full flex items-center justify-center",
+            !imageUrl && bgColor[randomNumber]
+          )}
         >
-          ?
+          {avatarName || "?"}
         </div>
       )}
 
       {isOnline && (
-        <div className="bg-green-600 p-1 absolute bottom-2 -right-1 z-10 rounded-full"></div>
+        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
       )}
     </div>
   );
 };
 
 export default Avatar;
+
+// Add this to lib/utils.ts if you don't have it
+// export function cn(...classes: (string | undefined)[]) {
+//   return classes.filter(Boolean).join(' ');
+// }

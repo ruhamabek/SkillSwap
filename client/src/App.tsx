@@ -13,7 +13,7 @@ import Payment from "./pages/Payment";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import ProfileSetup from "./pages/ProfileSetup";
-import Messanger from "./pages/Messanger";
+import Messanger from "./pages/Messenger";
  
 
 const queryClient = new QueryClient();

@@ -8,11 +8,23 @@ const messageSchema = new mongoose.Schema(
     },
     imageUrl: {
       type: String,
-      default: "",
+      validate: {
+        validator: (v: string) => {
+          if (!v) return true; // Allow empty
+          return /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(v);
+        },
+        message: "Invalid image URL format"
+      }
     },
     videoUrl: {
       type: String,
-      default: "",
+      validate: {
+        validator: (v: string) => {
+          if (!v) return true; // Allow empty
+          return /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(v);
+        },
+        message: "Invalid video URL format"
+      }
     },
     // Add these new fields for code support
     codeContent: {

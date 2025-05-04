@@ -160,3 +160,15 @@
   transform: translateY(-10px);
   transition: opacity 300ms, transform 300ms;
 }
+/* Fix unrecognized syntax color */
+.cm-editor.cm-focused {
+  outline: none !important;
+}
+
+.cm-content {
+  color: #000 !important; /* Force black text */
+}
+
+.cm-editor {
+  background-color: #f8f9fa; /* Optional: better contrast with black text */
+}
