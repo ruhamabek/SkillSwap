@@ -38,10 +38,10 @@ const MentorCard = ({
 }: MentorCardProps) => {
   const initials = profile.name
     ? profile.name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
     : "??";
 
   const navigate = useNavigate();
@@ -181,8 +181,9 @@ const MentorCard = ({
                 ? onConnect(profile.id, profile.image)
                 : navigate("/sign-up")
             }
+            disabled={isLoading} // Add disabled state
           >
-            Request Connection
+            {isLoading ? "Connecting..." : "Request Connection"} {/* Add loading text */}
           </Button>
         )}
       </CardFooter>

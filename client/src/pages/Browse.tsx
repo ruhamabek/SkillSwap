@@ -128,13 +128,17 @@ const Browse = () => {
     }
   };
 
-  const handleConnect = async (action: string, image: string) => {
-    // const { getALLconnectMutation, responseMutation } = Payment();
-    // console.log("this is mentore is", action, "this is image ", image);
-    const response = await AskMutation.mutateAsync({ action, image });
-
-    console.log("this is response", response);
-    toast.success(`${response}`);
+  const handleConnect = async (mentorId: string, image: string) => {
+    setLoadingId(mentorId); // Set loading state
+    try {
+      const response = await AskMutation.mutateAsync({ action: mentorId, image });
+      toast.success(`${response}`);
+    } catch (error) {
+      toast.error("Connection request failed");
+      console.error("Connection error:", error);
+    } finally {
+      setLoadingId(null); // Clear loading state
+    }
   };
 
   const filteredProfiles = profiles.filter((profile) => {
@@ -220,7 +224,7 @@ const Browse = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {topRatedMentors.map((profile, index) => (
                     <MentorCard
-                      key={profile._id}
+                      key={profile.userid}
                       profile={{
                         id: profile.userid,
                         name: profile.title,
@@ -236,7 +240,7 @@ const Browse = () => {
                         isPremium: index < 3,
                         // First 3 are premium
                       }}
-                      isLoading={loadingId === profile._id}
+                      isLoading={loadingId === profile.userid}
                       onConnect={handleConnect}
                       onSubmit={handleSubmit}
                     />
@@ -245,7 +249,7 @@ const Browse = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredProfiles.map((profile, index) => (
                     <MentorCard
-                      key={profile._id}
+                      key={profile.userid}
                       profile={{
                         id: profile.userid,
                         name: profile.title,
@@ -260,7 +264,7 @@ const Browse = () => {
                         image: profile.image,
                         // isPremium: index < 3, // First 3 are premium
                       }}
-                      isLoading={loadingId === profile._id}
+                      isLoading={loadingId === profile.userid}
                       onConnect={handleConnect}
                       onSubmit={handleSubmit}
                     />
