@@ -9,11 +9,11 @@ import Browse from "./pages/Browse";
 import Connections from "./pages/ConnectionNotif";
 import Profile from "./pages/Profile";
 import SignIn from "./pages/SignIn";
-import Payment from "./pages/Payment";
-import SignUp from "./pages/SignUp";
+ import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import ProfileSetup from "./pages/ProfileSetup";
 import Messanger from "./pages/Messenger";
+import Payment from "./pages/payment";
  
 
 const queryClient = new QueryClient();
